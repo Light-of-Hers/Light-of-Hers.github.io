@@ -15,7 +15,7 @@ body {
   background-attachment: fixed;
   background-position: 50% 0;
   background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background-size: cover;
   font-family: 'Fira Code', 'JetBrains Mono', 'Microsoft YaHei', '\5b8b\4f53', sans-serif;
 }
 main {
