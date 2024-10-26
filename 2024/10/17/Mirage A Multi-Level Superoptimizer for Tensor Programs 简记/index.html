@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en" theme-mode="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mirage A Multi-Level Superoptimizer for Tensor Programs 简记 | Renze Chen (陈仁泽)</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: local('Fira Code'), url('/font/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'Monaco';
+  src: local('Monaco'), url('/font/Monaco.ttf');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/imgs/bk-dark-0.png');
+ --light-background: url('/imgs/bk-light-5.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">About</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Blogs</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>Mirage A Multi-Level Superoptimizer for Tensor Programs 简记</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2024-10-16T16:24:00.000Z" id="date"> 2024-10-17</time></div></span><br><span>Blog Link: <div class="control"> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1490006494">[site]</a></div></span></div></div><hr><div id="post-content"><ul>
+<li>论文: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2405.05751">https://arxiv.org/abs/2405.05751</a> </li>
+<li>代码: <a target="_blank" rel="noopener" href="https://github.com/mirage-project/mirage">https://github.com/mirage-project/mirage</a></li>
+</ul>
+<p>Mirage 是 CMU 贾志豪组搞的一个 ML Compiler，输入是一个计算图子图（子图中的算子来自一个预定义的算子集合），输出是优化后的 cuda 程序，所作的优化在效果上等价于一系列优化的结合，包括但不限于图变换 (graph rewrite) 和算子融合 (operator fusion)。</p>
+<p>Mirage 和之前的算子级别或图级别的 ML Compiler 的不同之处在于，之前的 ML Compiler 的优化方法大多是 deductive program synthesis (一般称为 term rewrite)，也就是 graph rewrite、loop rewrite&#x2F;schedule 之类的方法，从原程序出发，通过一系列等价变换 (rewrite-rules, schedule-primitives, …)，得到新的程序；而 Mirage 用的是 inductive program synthesis (一般称为 program synthesis……)，根据语法 (算子集合) 直接去构造程序，通过一些方法 (通常是 SMT Solver) 来验证所构造的程序和原程序的等价性。ASPLOS’22 的 Rake (<a target="_blank" rel="noopener" href="https://dl.acm.org/doi/10.1145/3503222.3507714">paper</a>, <a target="_blank" rel="noopener" href="https://github.com/uwplse/rake">code</a>) 和 ASPLOS’24 的 Hydride (<a target="_blank" rel="noopener" href="https://dl.acm.org/doi/10.1145/3620665.3640385">paper</a>, <a target="_blank" rel="noopener" href="https://github.com/akothen/Hydride">code</a>) 也用了 program synthesis 的方法来优化向量化的 Halide 程序在 x86 CPU, ARM CPU 和 Hexagon DSP&#x2F;NPU 上的性能。</p>
+<h2 id="Mu-Graph"><a href="#Mu-Graph" class="headerlink" title="Mu-Graph"></a>Mu-Graph</h2><p>Mirage 的核心是一个 multi-level 的计算图表示，称为 mu-graph。mu-graph 包含三个层级，kernel-graph、block-graph 和 thread-graph，分别对应 cuda 程序执行的三个层级。</p>
+<ul>
+<li>kernel-graph 的张量位于全局内存，算子包含两种，一种是预定义算子 (pre-defined operator)，另一种是合成算子 (graph-defined operator)。其中预定义算子会直接对应 vendor-library 的 kernel，例如 matmul 对应 cublas 里的 gemm，而合成算子则会包含一个 block-graph。</li>
+<li>block-graph 的张量位于共享内存，算子包含预定义算子和合成算子。其中预定算子会对应 CUTLASS 或者 ThunderKittens 等 CUDA 组件库中封装好的共享内存上的一些操作（例如矩阵乘等），而合成算子会包含一个 thread-graph。block-graph 主要包含下面的属性来表示程序并行切分的信息：<ul>
+<li>imap: grid-dims&#x2F;spatial-dims 到 input tensor dims 的映射。</li>
+<li>omap: grid-dims&#x2F;spatial-dims 到 output tensor dims 的映射。</li>
+<li>fmap: for-loop-dims&#x2F;temporal-dims 到 input iterator dims &#x2F; output accumulator dims 的映射。</li>
+</ul>
+</li>
+<li>thread-graph 的张量位于寄存器，算子只包含预定义算子，对应封装好的寄存器上的一些操作。<br>下图展示了原程序为 GQA 计算所得到的一个 mu-graph：<br class='item-img' data-src='https://pic3.zhimg.com/v2-3544821350672b5ce565a65654c5687c_r.jpg'><img src="https://pic3.zhimg.com/v2-3544821350672b5ce565a65654c5687c_r.jpg"></li>
+</ul>
+<h2 id="Synthesis"><a href="#Synthesis" class="headerlink" title="Synthesis"></a>Synthesis</h2><p>program synthesis 的主要流程如下图所示：<br class='item-img' data-src='https://pic4.zhimg.com/v2-626fe69bedc740ae93e1a4332cc12237_r.jpg'><img src="https://pic4.zhimg.com/v2-626fe69bedc740ae93e1a4332cc12237_r.jpg" alt="|400"><br>Mirage 在 synthesis 过程中，维护一个 prefix kernel-graph（有算子数量限制），每次枚举一个算子加入(枚举 matmul, exp, add, …, 合成算子)，枚举到了合成算子，会递归进行 block-graph 的 synthesis (会枚举不同的 grid-dims 和 for-loop-dims)，以此类推。Mirage 会将 mu-graph 转换为 canonical form 来过滤重复的 mu-graph。</p>
+<h2 id="Pruning-Verification"><a href="#Pruning-Verification" class="headerlink" title="Pruning &amp; Verification"></a>Pruning &amp; Verification</h2><p>program synthesis 的问题主要在于速度比较慢，慢的原因主要有两点，一是枚举过程中有些前缀程序可能之后永远都无法扩展到和原程序等价，搜索这些就是浪费时间，二是最终验证合成的程序和原程序的等价性一般需要用到 SMT Solver，这个太慢了，特别是针对规模较大的 tensor program。针对此，Mirage 也提出了两个优化，一个是基于 abstract expression 的剪枝，一个是基于 finite field random test 的等价性验证。</p>
+<p>Mirage 会将搜索过程中的 prefix graph 的算子的表达式简化为 abstract expression，主要是简化了 matmul 和 reduction 等计算的表示：<br class='item-img' data-src='https://pic3.zhimg.com/v2-93145c7ea411d5d8245be42e6c49d61c_r.jpg'><img src="https://pic3.zhimg.com/v2-93145c7ea411d5d8245be42e6c49d61c_r.jpg" alt="|450"><br>借助公理集合 $A_\text{eq}$ 和 $A_\text{sub}$，使用 SMT 检查当前的 prefix graph 的 abstraction expression 和目标程序的 abstract-expression 的某个 sub-expression 是否等价，将不满足的裁剪掉：$A_\text{eq}\cup A_\text{sub}\nvDash\texttt{subexpr}(\text{E}(G),E_O)$。<br class='item-img' data-src='https://pic4.zhimg.com/v2-86d945b69c341ede3271049c6ac4e2d9_r.jpg'><img src="https://pic4.zhimg.com/v2-86d945b69c341ede3271049c6ac4e2d9_r.jpg" alt="|400"></p>
+<p>为了验证合成的 mu-graph 和原 mu-graph 的等价性，Mirage 在 finite filed $(\mathbb{Z}_p,\mathbb{Z}_q)$ 上随机采样输入进行测试，在通过的测试样例数量达到一定程度时，可以在理论上保证两者不等价的概率足够小。具体细节还是看论文吧……<br class='item-img' data-src='https://pic1.zhimg.com/v2-b13f52a5b60caf67e9b21e625ab60dd4_r.jpg'><img src="https://pic1.zhimg.com/v2-b13f52a5b60caf67e9b21e625ab60dd4_r.jpg" alt="|400"></p>
+<p>至于根据 mu-graph 生成实际的 cuda 程序，Mirage 也做了不少的优化，在<a target="_blank" rel="noopener" href="https://mirage-project.readthedocs.io/en/latest/transpiler.html">文档</a>里有详细的描述，之后可能会再写个博客分析一下。</p>
+<h2 id="Disscussion"><a href="#Disscussion" class="headerlink" title="Disscussion"></a>Disscussion</h2><p>我个人还是挺喜欢 Mirage 这个工作的，它通过 inductive program synthesis 巧妙地将 kernel-level 和 block-level (以及 thread-level) 的优化空间进行了融合统一，效果也确实挺不错的（我之前其实也有考虑将这几个层级进行统一优化，不过一直拘泥于 deductive synthesis 的思路，很难搞出实际可用的解决方案）。不过 Mirage 还是有几个个人感觉比较局限或者说需要改进的点：</p>
+<ul>
+<li>优化时间：论文的 Section 7.4 有提到，在 block-graph 的算子数量达到 7 的时候（这个是搜索出论文 Figure 4 的优化后的 GQA 的必要数量），搜索时间基本就要破一个小时了（当然这个在一众 Tuning-based ML Compiler 里其实算比较快的了……）。</li>
+<li>对动态形状的支持：目前 Mirage 应该是只支持静态形状输入，个人希望搜索出的 mu-graph 可以直接扩展到支持动态形状输入（保持 block-graph 的 shape 不变）。</li>
+<li>支持的程序：目前 Mirage 的 finite field random test 要求的 mu-graph 一条路径上至多只有一个 exp，不然难以推导出论文中的 Theorem 3.</li>
+<li>算子扩展：目前 Mirage 支持的算子类型比较有限（连 max 都没有，所以 Mirage 写的 Attention 都是没有使用 numerical stable softmax 的版本，基本不会在生产环境中使用），而且扩展起来挺麻烦的，添加一个新算子需要实现其对应的 abstraction expression（可能还需要添加新的公理到 $A_\text{eq}$ 和 $A_\text{sub}$ 中）以及在 finite field 上的操作，基本上只能由开发者进行扩展（而且有些算子还真不一定好加进来，比如 max ……）。我觉得这个是最大的问题。</li>
+</ul>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages" style="justify-content: flex-end"><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/2024/08/18/CUTLASS%203.x%20CuTe%20Layout%20Composition%20%E7%9A%84%E4%B8%80%E5%A4%84%E7%BA%B0%E6%BC%8F/">CUTLASS 3.x CuTe Layout Composition 的一处纰漏 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a target="_blank" rel="noopener" href="https://prts.wiki/w/%E6%96%87%E4%BB%B6:%E6%A8%A1%E7%BB%84_%E5%8C%BB%E4%B8%8D%E8%87%AA%E6%B2%BB.png" id="logo"><img src="/imgs/avatar.png" alt="Logo"></a><h1 id="Dr"><a href="/">Renze Chen</a></h1><div id="description"><p>陈仁泽</p></div><div id="social-links"><a class="social" target="_blank" rel="noopener" href="https://github.com/Light-of-Hers"><i class="fab fa-github" alt="GitHub"></i></a><a class="social" target="_blank" rel="noopener" href="https://www.zhihu.com/people/yi-guang-99-48"><i class="fab fa-zhihu" alt="Zhihu"></i></a><a class="social" target="_blank" rel="noopener" href="https://orcid.org/0000-0001-5938-7965"><i class="fab fa-orcid" alt="ORCID"></i></a><a class="social" target="_blank" rel="noopener" href="https://dblp.org/pid/260/5910"><i class="iconfont icon-dblp" alt="DBLP"></i></a><a class="social" href="mailto:crz@pku.edu.cn"><i class="fa fa-envelope" alt="E-Mail"></i></a></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Mu-Graph"><span class="toc-number">1.</span> <span class="toc-text">Mu-Graph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Synthesis"><span class="toc-number">2.</span> <span class="toc-text">Synthesis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pruning-Verification"><span class="toc-number">3.</span> <span class="toc-text">Pruning &amp; Verification</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Disscussion"><span class="toc-number">4.</span> <span class="toc-text">Disscussion</span></a></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main></body></html>
