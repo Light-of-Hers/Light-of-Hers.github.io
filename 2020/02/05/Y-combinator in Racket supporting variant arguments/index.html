@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="en" theme-mode="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Y-combinator in Racket supporting variant arguments | Renze Chen (陈仁泽)</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: local('Fira Code'), url('/font/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'Monaco';
+  src: local('Monaco'), url('/font/Monaco.ttf');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/imgs/bk-dark-0.png');
+ --light-background: url('/imgs/bk-light-5.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">About</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Blogs</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>Y-combinator in Racket supporting variant arguments</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2020-02-05T07:45:00.000Z" id="date"> 2020-02-05</time></div></span><br><span>Blog Link: <div class="control"> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105217499">[site]</a></div></span></div></div><hr><div id="post-content"><p>Y-combinator:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> Y<br>  (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (g)<br>    (<span class="hljs-name"><span class="hljs-built_in">let</span></span> ((<span class="hljs-name">d</span> (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (f)<br>               (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> <span class="hljs-name">args</span><br>                 (apply (g (f f)) args)))))<br>      (<span class="hljs-name">d</span> d))))<br></code></pre></td></tr></table></figure>
+
+<p>An example:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs scheme">(<span class="hljs-name"><span class="hljs-built_in">let</span></span> ((<span class="hljs-name">fact</span> (<span class="hljs-name">Y</span> (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (fact)<br>                 (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (n)<br>                   (<span class="hljs-name"><span class="hljs-built_in">if</span></span> (<span class="hljs-name"><span class="hljs-built_in">zero?</span></span> n)<br>                       <span class="hljs-number">1</span><br>                       (<span class="hljs-name"><span class="hljs-built_in">*</span></span> n (<span class="hljs-name">fact</span> (<span class="hljs-name"><span class="hljs-built_in">-</span></span> n <span class="hljs-number">1</span>)))))))))<br>  (<span class="hljs-name">fact</span> <span class="hljs-number">10</span>))<br></code></pre></td></tr></table></figure>
+
+<p>Another example:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs scheme">(<span class="hljs-name"><span class="hljs-built_in">let</span></span> ((<span class="hljs-name"><span class="hljs-built_in">gcd</span></span> (<span class="hljs-name">Y</span> (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (gcd)<br>                (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (a b)<br>                  (<span class="hljs-name"><span class="hljs-built_in">if</span></span> (<span class="hljs-name"><span class="hljs-built_in">zero?</span></span> b)<br>                      a<br>                      (<span class="hljs-name"><span class="hljs-built_in">gcd</span></span> b (<span class="hljs-name"><span class="hljs-built_in">remainder</span></span> a b))))))))<br>  (<span class="hljs-name"><span class="hljs-built_in">gcd</span></span> <span class="hljs-number">12</span> <span class="hljs-number">8</span>))<br></code></pre></td></tr></table></figure><div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/2020/02/17/Y%E7%BB%84%E5%90%88%E5%AD%90%EF%BC%88%E4%B8%8D%E5%8A%A8%E7%82%B9%E7%BB%84%E5%90%88%E5%AD%90%EF%BC%89%E7%9A%84%E7%AE%80%E5%8D%95%E6%8E%A8%E5%AF%BC/">← Next Y组合子（不动点组合子）的简单推导</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/2020/01/21/C++%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BB%A3%E6%95%B0%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B(ADT)%E5%8F%8A%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E7%AD%89%E6%93%8D%E4%BD%9C%EF%BC%9A%E4%BB%A5%E7%BC%96%E8%AF%91%E6%9C%9FAVL%E6%A0%91%E4%B8%BA%E4%BE%8B/">C++模板元编程中的代数数据类型(ADT)及模式匹配等操作：以编译期AVL树为例 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a target="_blank" rel="noopener" href="https://prts.wiki/w/%E6%96%87%E4%BB%B6:%E6%A8%A1%E7%BB%84_%E5%8C%BB%E4%B8%8D%E8%87%AA%E6%B2%BB.png" id="logo"><img src="/imgs/avatar.png" alt="Logo"></a><h1 id="Dr"><a href="/">Renze Chen</a></h1><div id="description"><p>陈仁泽</p></div><div id="social-links"><a class="social" target="_blank" rel="noopener" href="https://github.com/Light-of-Hers"><i class="fab fa-github" alt="GitHub"></i></a><a class="social" target="_blank" rel="noopener" href="https://www.zhihu.com/people/yi-guang-99-48"><i class="fab fa-zhihu" alt="Zhihu"></i></a><a class="social" target="_blank" rel="noopener" href="https://orcid.org/0000-0001-5938-7965"><i class="fab fa-orcid" alt="ORCID"></i></a><a class="social" target="_blank" rel="noopener" href="https://dblp.org/pid/260/5910"><i class="iconfont icon-dblp" alt="DBLP"></i></a><a class="social" href="mailto:crz@pku.edu.cn"><i class="fa fa-envelope" alt="E-Mail"></i></a></div></div><div id="aside-block"></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main></body></html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="en" theme-mode="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>C++泛化的非侵入式访问者接口 | Renze Chen (陈仁泽)</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: local('Fira Code'), url('/font/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'Monaco';
+  src: local('Monaco'), url('/font/Monaco.ttf');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/imgs/bk-dark-0.png');
+ --light-background: url('/imgs/bk-light-5.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">About</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Blogs</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>C++泛化的非侵入式访问者接口</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2020-08-06T13:09:00.000Z" id="date"> 2020-08-06</time></div></span><br><span>Blog Link: <div class="control"> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/170590934">[site]</a></div></span></div></div><hr><div id="post-content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前阵子看了下TVM的functor相关的源码和<a target="_blank" rel="noopener" href="https://www.zhihu.com/people/zhuang-tao-31">@Ubp.a</a>的一篇<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/112003741">有关非侵入式访问者接口的文章</a>，有了点想法，试着写了一个较为泛化的非侵入式访问者接口。</p>
+<p>（对相关概念不熟的建议先看一下<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/112003741">Ubp.a的文章</a>）</p>
+<h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><p>思路和<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/112003741">Ubp.a的文章</a>的类似：显式地保存一个虚表，在访问者类构造时将目标的子类和对应的派发函数登记到表上，在访问时根据传入的基类指针选择派发的函数：</p>
+<p class='item-img' data-src='https://pic3.zhimg.com/v2-0d21bb7c16fdbac1ec18aa9f450b319e_r.jpg'><img src="https://pic3.zhimg.com/v2-0d21bb7c16fdbac1ec18aa9f450b319e_r.jpg"></p>
+<p>注：该代码中存在一些问题，<code>std::type_info</code>只实现了相等性的比较，不能直接作为<code>std::map</code>的索引类型，需要再套一个<code>std::type_index</code>。</p>
+<h2 id="泛化的虚表"><a href="#泛化的虚表" class="headerlink" title="泛化的虚表"></a>泛化的虚表</h2><p>通常来说在RTTI的支持下可以利用<code>std::type_index</code>和<code>typeid</code>来将一个静态类型或一个对象指针的动态类型转化为索引值，再利用<code>std::map</code>或<code>std::unordered_map</code>来检索。</p>
+<p>不过一方面RTTI本身带有不能忽视的开销，另一方面<code>std::map</code>等关联容器的检索开销相对于数组而言还是稍微有点大，因此有时用户可能会自行实现一套运行时类型接口，比如TVM就是如此。</p>
+<p>因此有必要对虚表进行泛化。不难看出，虚表主要需要支持两种操作：</p>
+<ul>
+<li><code>Set(Type t, Function f) -&gt; Void</code>: 将<code>t</code>的派发函数设置为<code>f</code></li>
+<li><code>Get(Object o) -&gt; Function</code>: 返回对象<code>o</code>对应的派发函数。</li>
+</ul>
+<p>比如使用<code>std::map</code>和<code>std::type_index</code>检索的虚表可以抽象为：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> Base, <span class="hljs-keyword">typename</span> Func&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">default_vtable</span> {<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;</span><br><span class="hljs-function">  <span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">Set</span><span class="hljs-params">(Func f)</span> </span>{<br>    data_[std::<span class="hljs-built_in">type_index</span>(<span class="hljs-built_in">typeid</span>(T))] = f;<br>  }<br>  <span class="hljs-function"><span class="hljs-keyword">inline</span> Func <span class="hljs-title">Get</span><span class="hljs-params">(Base *base)</span> </span>{<br>    <span class="hljs-keyword">return</span> data_[std::<span class="hljs-built_in">type_index</span>(<span class="hljs-built_in">typeid</span>(*base))];<br>  }<br><br><span class="hljs-keyword">private</span>:<br>  std::map&lt;std::type_index, Func&gt; data_;<br>};<br></code></pre></td></tr></table></figure>
+
+<p>而TVM中使用的虚表（<code>tvm::NodeFunctor</code>）可以抽象为：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> Base, <span class="hljs-keyword">typename</span> Func&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">node_vtable</span> {<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> TNode&gt;<br>    <span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">Set</span><span class="hljs-params">(Func f)</span> </span>{<br>        <span class="hljs-type">uint32_t</span> tindex = TNode::<span class="hljs-built_in">RuntimeTypeIndex</span>();<br>        <span class="hljs-keyword">if</span> (func_.<span class="hljs-built_in">size</span>() &lt;= tindex) {<br>          func_.<span class="hljs-built_in">resize</span>(tindex + <span class="hljs-number">1</span>, <span class="hljs-literal">nullptr</span>);<br>        }<br>        <span class="hljs-built_in">CHECK</span>(func_[tindex] == <span class="hljs-literal">nullptr</span>) <br>            &lt;&lt; <span class="hljs-string">"Dispatch for "</span> &lt;&lt; TNode::_type_key &lt;&lt; <span class="hljs-string">" is already set"</span>;<br>        func_[tindex] = f;<br>    }<br>    <span class="hljs-function"><span class="hljs-keyword">inline</span> Func <span class="hljs-title">Get</span><span class="hljs-params">(Base *base)</span> </span>{<br>        <span class="hljs-keyword">return</span> func_[base-&gt;<span class="hljs-built_in">type_index</span>()];<br>    }<br><span class="hljs-keyword">private</span>:<br>    std::vector&lt;Func&gt; func_;<br>}<br></code></pre></td></tr></table></figure>
+
+<h2 id="泛化的访问者接口"><a href="#泛化的访问者接口" class="headerlink" title="泛化的访问者接口"></a>泛化的访问者接口</h2><p>侵入式的访问者接口（每个被访问类需要实现一个<code>accept</code>函数）除了侵入式这一个缺点以外，还有一个不太好的地方，就是因为<code>accept</code>函数需要实现为虚函数，因此不能对函数本身直接泛化（通常需要对class进行泛化），这就导致访问者函数不容易泛化，也就是说针对同一种被访问对象，不容易实现visit函数类型不同的访问者。</p>
+<p>非侵入式的接口则可以直接在接口类对visit函数类型进行泛化。</p>
+<p>我写的接口如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span>, <span class="hljs-keyword">typename</span>, <span class="hljs-keyword">typename</span>, <span class="hljs-keyword">typename</span>, <br>		<span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span>, <span class="hljs-keyword">typename</span>&gt; <span class="hljs-keyword">typename</span> = default_vtable&gt;<br><span class="hljs-keyword">class</span> GeneralVisitor;<br><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> Visitor, <span class="hljs-keyword">typename</span> Base, <span class="hljs-keyword">typename</span> ...Deriveds,<br>        <span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span>, <span class="hljs-keyword">typename</span>&gt; <span class="hljs-keyword">typename</span> Vtable, <span class="hljs-keyword">typename</span> R, <span class="hljs-keyword">typename</span> ...Args&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">GeneralVisitor</span>&lt;Visitor, Base, std::tuple&lt;Deriveds...&gt;, <span class="hljs-built_in">R</span>(Args...), Vtable&gt; {<br>  <span class="hljs-keyword">using</span> VtableType = Vtable&lt;Base, <span class="hljs-built_in">R</span>(*)(Visitor *, Base *, Args...)&gt;;<br><br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function">R <span class="hljs-title">Visit</span><span class="hljs-params">(Base *base, Args ...args)</span> </span>{<br>    <span class="hljs-type">static</span> VtableType vtable = <span class="hljs-built_in">BuildVtable</span>();<br>    <span class="hljs-keyword">return</span> vtable.<span class="hljs-built_in">Get</span>(base)(<span class="hljs-built_in">static_cast</span>&lt;Visitor *&gt;(<span class="hljs-keyword">this</span>), base, std::forward&lt;Args&gt;(args)...);<br>  }<br><br><span class="hljs-keyword">private</span>:<br>  <span class="hljs-function"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> Derived, <span class="hljs-keyword">typename</span> ...Rest&gt;</span><br><span class="hljs-function">  <span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">Register</span><span class="hljs-params">(VtableType &amp;vtable)</span> </span>{<br>    vtable.<span class="hljs-keyword">template</span> <span class="hljs-built_in">Set</span>&lt;Derived&gt;(<br>            [](Visitor *visitor, Base *base, Args ...args) -&gt; R {<br>              <span class="hljs-keyword">return</span> visitor-&gt;<span class="hljs-built_in">ImplVisit</span>(<span class="hljs-built_in">static_cast</span>&lt;Derived *&gt;(base), <br>                                        std::forward&lt;Args&gt;(args)...);<br>            }<br>    );<br>    <span class="hljs-function"><span class="hljs-keyword">if</span> <span class="hljs-title">constexpr</span> <span class="hljs-params">(<span class="hljs-keyword">sizeof</span>...(Rest) &gt; <span class="hljs-number">0</span>)</span> </span>{<br>      <span class="hljs-built_in">Register</span>&lt;Rest...&gt;(vtable);<br>    }<br>  }<br><br>  <span class="hljs-function"><span class="hljs-type">static</span> VtableType <span class="hljs-title">BuildVtable</span><span class="hljs-params">()</span> </span>{<br>    VtableType vtable;<br>    <span class="hljs-built_in">Register</span>&lt;Deriveds...&gt;(vtable);<br>    <span class="hljs-keyword">return</span> vtable;<br>  }<br>};<br></code></pre></td></tr></table></figure>
+
+<p>其中各个模板参数含义分别为：</p>
+<ul>
+<li><code>Visitor</code>：访问者类</li>
+<li><code>Base</code>：被访问的基类</li>
+<li><code>Deriveds</code>：被访问的派生类</li>
+<li><code>R(Args...)</code>：visit函数的类型</li>
+<li><code>Vtable</code>：虚表类型，默认为前文提到的用<code>std::type_index</code>和<code>std::map</code>实现的<code>default_vtable</code>。</li>
+</ul>
+<p>这边出于效率考虑，学习了TVM的一些做法：虚表保存的为函数指针而不是<code>std::function</code>容器（这样的话保存的函数需要多一个参数来传入<code>Visitor*</code>）；将虚表声明为<code>Visit</code>函数内的静态变量，这样一方面可以在<code>Visit</code>第一次调用时才进行虚表的初始化，另一方面对于每个继承同一个模板类的类，只需要保存一个虚表的实例。</p>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><h3 id="简单的计算器"><a href="#简单的计算器" class="headerlink" title="简单的计算器"></a>简单的计算器</h3><p>参见<a href="https://link.zhihu.com/?target=https://github.com/Light-of-Hers/GeneralVisitor">https://github.com/Light-of-Hers/GeneralVisitor</a></p>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/2020/10/05/MIT%206.828%20JOS%20Lab1%20%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/">← Next MIT 6.828 JOS Lab1 实验报告</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/2020/06/28/%E7%94%A8%E9%AD%94%E6%B3%95%E6%89%93%E8%B4%A5%E9%AD%94%E6%B3%95%EF%BC%9AC++%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E7%9A%84scheme%E5%85%83%E5%BE%AA%E7%8E%AF%E6%B1%82%E5%80%BC%E5%99%A8/">用魔法打败魔法：C++模板元编程实现的scheme元循环求值器 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a target="_blank" rel="noopener" href="https://prts.wiki/w/%E6%96%87%E4%BB%B6:%E6%A8%A1%E7%BB%84_%E5%8C%BB%E4%B8%8D%E8%87%AA%E6%B2%BB.png" id="logo"><img src="/imgs/avatar.png" alt="Logo"></a><h1 id="Dr"><a href="/">Renze Chen</a></h1><div id="description"><p>陈仁泽</p></div><div id="social-links"><a class="social" target="_blank" rel="noopener" href="https://github.com/Light-of-Hers"><i class="fab fa-github" alt="GitHub"></i></a><a class="social" target="_blank" rel="noopener" href="https://www.zhihu.com/people/yi-guang-99-48"><i class="fab fa-zhihu" alt="Zhihu"></i></a><a class="social" target="_blank" rel="noopener" href="https://orcid.org/0000-0001-5938-7965"><i class="fab fa-orcid" alt="ORCID"></i></a><a class="social" target="_blank" rel="noopener" href="https://dblp.org/pid/260/5910"><i class="iconfont icon-dblp" alt="DBLP"></i></a><a class="social" href="mailto:crz@pku.edu.cn"><i class="fa fa-envelope" alt="E-Mail"></i></a></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E8%B7%AF"><span class="toc-number">2.</span> <span class="toc-text">基本思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%9B%E5%8C%96%E7%9A%84%E8%99%9A%E8%A1%A8"><span class="toc-number">3.</span> <span class="toc-text">泛化的虚表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%9B%E5%8C%96%E7%9A%84%E8%AE%BF%E9%97%AE%E8%80%85%E6%8E%A5%E5%8F%A3"><span class="toc-number">4.</span> <span class="toc-text">泛化的访问者接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">使用示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E8%AE%A1%E7%AE%97%E5%99%A8"><span class="toc-number">5.1.</span> <span class="toc-text">简单的计算器</span></a></li></ol></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main></body></html>

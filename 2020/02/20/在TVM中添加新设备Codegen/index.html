@@ -1,0 +1,267 @@
+<!DOCTYPE html><html lang="en" theme-mode="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>在TVM中添加新设备Codegen | Renze Chen (陈仁泽)</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: local('Fira Code'), url('/font/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'Monaco';
+  src: local('Monaco'), url('/font/Monaco.ttf');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/imgs/bk-dark-0.png');
+ --light-background: url('/imgs/bk-light-5.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">About</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Blogs</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>在TVM中添加新设备Codegen</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2020-02-20T10:40:00.000Z" id="date"> 2020-02-20</time></div></span><br><span>Blog Link: <div class="control"> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/108071133">[site]</a></div></span></div></div><hr><div id="post-content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近想试着往TVM(v0.7)中加入针对某一新的底层设备的Codegen，本以为是个比较容易的事，但源代码看着看着发现TVM中Codegen和其他部分的耦合比预想中的更紧，故写下这篇短文记录一下添加新的Codegen需要涉及的部分。</p>
+<h2 id="Codegen所针对的IR"><a href="#Codegen所针对的IR" class="headerlink" title="Codegen所针对的IR"></a>Codegen所针对的IR</h2><p>可以针对两种IR进行Codegen：</p>
+<ul>
+<li>Relay IR（之后简写为Relay）</li>
+<li>Tensor Level IR（之后简写为TIR）</li>
+</ul>
+<p>后者TIR是Relay出现之前TVM使用的IR，相对更加底层（在PL特性的丰富性上）。<code>placeholder</code>等Tensor Expression（之后简写为TE）在C++端都是被转化为TIR（如TE的<code>OperationNode</code>继承自TIR的<code>FunctionBaseNode</code>）。</p>
+<p>在Relay出现之前，各种后端的Codegen都是针对TIR进行的。Relay出现之后，可能出于复用性等方面的考虑，Relay的通常的Codegen都是先转化为TIR再进行的，如<code>tvm.relay.build_module.build</code>的调用路径为：</p>
+<ol>
+<li><code>tvm.relay.build_module.build</code>　in <code>python/tvm/relay/build_module.py</code></li>
+<li><code>tvm.relay.build_module.BuildModule.build</code> in …</li>
+<li><code>tvm::relay::backend::RelayBuildModule::Build</code> in <code>src/relay/backend/build_module.cc</code></li>
+<li><code>tvm::relay::backend::RelayBuildModule::BuildRelay</code> in …</li>
+<li><code>tvm::build</code> in <code>src/driver/driver_api.cc</code></li>
+<li><code>tvm::build</code>（前一个<code>build</code>的重载）　in …</li>
+<li><code>tvm::codegen::Build</code> in <code>src/target/codegen.cc</code>，在这里会用<code>tvm::runtime::Registry::Get</code>根据传入的<code>target</code>参数动态派发给具体函数，如<code>target</code>为<code>"cuda"</code>时会派发给注册为<code>codegen.build_cuda</code>的<code>tvm::codegen::BuildCUDA</code>(in <code>src/target/opt/build_cuda_on.cc</code>)。</li>
+</ol>
+<p>本文主要介绍针对TIR生成代码所涉及的部分。关于针对Relay做Codegen可以参考<a href="https://link.zhihu.com/?target=https://docs.tvm.ai/dev/relay_bring_your_own_codegen.html">官方文档</a>（虽然有点简略）。</p>
+<p>接下来将以一个非常简单（代码量不足70行）的后端模块”hello”的构造来展示针对TIR的代码生成。该模块的使用如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> tvm<br><br>A = tvm.placeholder((<span class="hljs-number">10</span>, <span class="hljs-number">10</span>))<br>B = tvm.compute((<span class="hljs-number">10</span>, <span class="hljs-number">10</span>), <span class="hljs-keyword">lambda</span> i, j: A[i, j])<br>s = tvm.create_schedule(B.op)<br>f = tvm.build(s, [A, B], <span class="hljs-string">"hello"</span>)<br><span class="hljs-built_in">print</span>(f.get_source())<br></code></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// hello tvm backend!</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">default_function</span><span class="hljs-params">( <span class="hljs-type">void</span>* args,  <span class="hljs-type">void</span>* arg_type_ids, <span class="hljs-type">int32_t</span> num_args,  <span class="hljs-type">void</span>* out_ret_value,  <span class="hljs-type">void</span>* out_ret_tcode)</span> {<br>  <span class="hljs-comment">// ......</span><br>  <span class="hljs-type">float</span>* placeholder = (<span class="hljs-type">float</span>*)(((DLTensor*)arg0)[<span class="hljs-number">0</span>].data);<br>  <span class="hljs-comment">// ......</span><br>  <span class="hljs-type">float</span>* compute = (<span class="hljs-type">float</span>*)(((DLTensor*)arg1)[<span class="hljs-number">0</span>].data);<br>  <span class="hljs-comment">// ......</span><br>  <span class="hljs-keyword">for</span> (<span class="hljs-type">int32_t</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; ++i) {<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int32_t</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">10</span>; ++j) {<br>      compute[((i * <span class="hljs-number">10</span>) + j)] = placeholder[((i * <span class="hljs-number">10</span>) + j)];<br>    }<br>  }<br>}<br></code></pre></td></tr></table></figure>
+
+<h2 id="新建模块文件"><a href="#新建模块文件" class="headerlink" title="新建模块文件"></a>新建模块文件</h2><p>新增的模块的python代码一般写在<code>python/tvm/contrib/</code>，C++代码一般写在<code>src/runtime/contrib/</code>。我们这里在<code>src/runtime/contrib/</code>下添加文件夹<code>hello/</code>，<code>hello/</code>内添加<code>hello_module.cc</code>。</p>
+<p>因为作为示例的hello模块非常简单，因此只用单文件就够了。一般来讲要视情况组织为多个编译单元，具体可参见<code>src/runtime/contrib/</code>中其他模块的组织方式。</p>
+<p>hello模块直接利用<code>tvm.build</code>等前端接口进行构建，如果还需要处理一些前端逻辑或是提供其他的前端接口，则可在<code>python/tvm/contrib/</code>中添加对应的文件。</p>
+<h2 id="实现后端模块"><a href="#实现后端模块" class="headerlink" title="实现后端模块"></a>实现后端模块</h2><p><code>tvm.build</code>和<code>tvm.build_module.build</code>返回的都是<code>tvm::runtime::Module</code>，而<code>tvm::runtime::Module</code>是<code>tvm::runtime::ModuleNode</code>的运行时引用，因此我们需要先新定义一个<code>ModuleNode</code>的子类。</p>
+<p><code>ModuleNode</code>有以下虚方法：</p>
+<ul>
+<li><code>type_key</code>：返回标识该模块的字符串，例如<code>CUDAModuleNode</code>的<code>type_key</code>返回<code>"cuda"</code>。</li>
+<li><code>GetFunction</code>：返回用于运行该模块的<code>PackedFunc</code>（关于<code>PackedFunc</code>的介绍参见<a href="https://link.zhihu.com/?target=https://docs.tvm.ai/dev/runtime.html">官方文档</a>），例如<code>CUDAModuleNode</code>的<code>GetFunction</code>返回的<code>PackedFunc</code>利用CUDA Runtime API来加载运行保存在<code>CUDAModuleNode</code>中的PTX代码。</li>
+<li><code>SaveToFile</code>：将模块保存进文件。</li>
+<li><code>SaveToBinary</code>：将模块输出到二进制流。</li>
+<li><code>GetSource</code>：返回模块保存的源代码，例如<code>CUDAModuleNode</code>的<code>GetSource</code>返回其保存的CUDA C代码。</li>
+</ul>
+<p>其中<code>type_key</code>和<code>GetFunction</code>为纯虚函数，每个<code>ModuleNode</code>的非抽象子类必须实现，否则实例化处会出现编译期错误。而另外三个虚方法如果子类没有覆写，则在被调用时会抛出运行时错误。</p>
+<p>以hello模块的<code>HelloModuleNode</code>为例，该类实现了<code>type_key</code>、<code>GetFunction</code>、<code>GetSource</code>。该类构造时接收代码字符串，<code>GetSource</code>返回代码，<code>GetFunction</code>返回的<code>PackedFunc</code>输出代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">HelloModuleNode</span> : <span class="hljs-keyword">public</span> ModuleNode {<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">HelloModuleNode</span><span class="hljs-params">(std::string code)</span> : code_(std::move(code)) {</span>}<br>  <span class="hljs-function"><span class="hljs-type">const</span> <span class="hljs-type">char</span> *<span class="hljs-title">type_key</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> <span class="hljs-keyword">final</span> </span>{<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">"hello"</span>;<br>  }<br>  <span class="hljs-function">PackedFunc <span class="hljs-title">GetFunction</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">      <span class="hljs-type">const</span> std::string &amp;name,</span></span><br><span class="hljs-params"><span class="hljs-function">      <span class="hljs-type">const</span> ObjectPtr&lt;Object&gt; &amp;sptr_to_self)</span> <span class="hljs-keyword">final</span> </span>{<br>    <span class="hljs-keyword">auto</span> code = code_;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">PackedFunc</span>([code](TVMArgs args, TVMRetValue *ret) {<br>      std::cout &lt;&lt; code &lt;&lt; std::endl;<br>    });<br>  }<br>  <span class="hljs-function">std::string <span class="hljs-title">GetSource</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string &amp;format)</span> <span class="hljs-keyword">final</span> </span>{<br>    <span class="hljs-keyword">return</span> code_;<br>  }<br><span class="hljs-keyword">private</span>:<br>  std::string code_;<br>};<br></code></pre></td></tr></table></figure>
+
+<h2 id="实现翻译单元"><a href="#实现翻译单元" class="headerlink" title="实现翻译单元"></a>实现翻译单元</h2><p>因为前端传递过来的是TIR，因此还需要有一个翻译单元来将传递过来的TIR进行转换，以合适的形式传递给后端模块。</p>
+<p>一般来说这个单元做的事就是代码生成，如<code>CodeGenCUDA</code>就将传入的TIR翻译为CUDA C代码传递给<code>CUDAModuleNode</code>。</p>
+<p>作为示例的hello模块也加一个非常简单的代码生成单元<code>CodeGenHello</code>，该类继承自<code>CodeGenC</code>，所做的仅仅是在<code>CodeGenC</code>输出的前置声明语句中添加一个注释<code>// hello tvm backend!</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CodeGenHello</span> : <span class="hljs-keyword">public</span> CodeGenC {<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function">std::string <span class="hljs-title">Finish</span><span class="hljs-params">()</span>  </span>{<br>    decl_stream &lt;&lt; <span class="hljs-string">"// hello tvm backend!"</span> &lt;&lt; std::endl;<br>    <span class="hljs-keyword">return</span> CodeGenC::<span class="hljs-built_in">Finish</span>();<br>  }<br>};<br></code></pre></td></tr></table></figure>
+
+<h2 id="注册接口函数"><a href="#注册接口函数" class="headerlink" title="注册接口函数"></a>注册接口函数</h2><p><code>tvm.build</code>和<code>tvm.build_module.build</code>最后一步的派发都发生在<code>tvm::codegen::Build</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::string build_f_name = <span class="hljs-string">"codegen.build_"</span> + mode;<br>  <span class="hljs-comment">// the build function.</span><br>  <span class="hljs-type">const</span> PackedFunc* bf = runtime::Registry::<span class="hljs-built_in">Get</span>(build_f_name);<br>  <span class="hljs-built_in">CHECK</span>(bf != <span class="hljs-literal">nullptr</span>)<br>      &lt;&lt; <span class="hljs-string">"Target "</span> &lt;&lt; target &lt;&lt; <span class="hljs-string">" is not enabled"</span>;<br>  runtime::Module m = transformed_funcs.<span class="hljs-built_in">empty</span>() ?<br>                      (*bf)(funcs, target) :<br>                      (*bf)(transformed_funcs, target);<br>  <span class="hljs-keyword">return</span> m;<br></code></pre></td></tr></table></figure>
+
+<p>由其代码可见，如果想利用<code>tvm.build</code>等已有的前端接口构建模块，则需将一个函数签名为<code>(tvm::Array&lt;tvm::tir::LoweredFunc&gt;, const std::string &amp;) -&gt; tvm::runtime::Module</code>的后端接口函数注册为<code>"codegen.build_${target}"</code>。</p>
+<p>如下为hello模块的后端接口函数及其注册：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">Module <span class="hljs-title">BulidHello</span><span class="hljs-params">(Array&lt;tir::LoweredFunc&gt; funcs, <span class="hljs-type">const</span> std::string &amp;target)</span> </span>{<br>  codegen::CodeGenHello cg;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> &amp;f : funcs)<br>    cg.<span class="hljs-built_in">AddFunction</span>(f);<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Module</span>(<span class="hljs-built_in">make_object</span>&lt;HelloModuleNode&gt;(cg.<span class="hljs-built_in">Finish</span>()));<br>}<br><br><span class="hljs-built_in">TVM_REGISTER_GLOBAL</span>(<span class="hljs-string">"codegen.build_hello"</span>)<br>.<span class="hljs-built_in">set_body_typed</span>(BulidHello);<br></code></pre></td></tr></table></figure>
+
+<p>当然也可以注册其他类型的后端接口，不过这样可能需要自己添加其他函数来处理前端的输入（Relay、Tensor-Expression等），将前端输入转化为后端接口适配的类型。</p>
+<h2 id="添加设备类型"><a href="#添加设备类型" class="headerlink" title="添加设备类型"></a>添加设备类型</h2><p>因为<code>tvm.build</code>的执行过程会提前进行一些和设备相关的检查（好像会检查这些的代码最终都会流向<code>tvm::codegen::Build</code>，而后者本身就会检查设备后端接口的存在性，所以这种强行增加模块耦合性的行为是为什么呢……），因此需要手动在源码中为我们的hello模块“放行”：</p>
+<p>在<code>python/tvm/_ffi/runtime_ctypes.py</code>中的<code>TVMContext.STR2MASK</code>中添加一项：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python">STR2MASK = {<br>        <span class="hljs-string">'llvm'</span>: <span class="hljs-number">1</span>,<br>        <span class="hljs-string">'stackvm'</span>: <span class="hljs-number">1</span>,<br>        <span class="hljs-string">'cpu'</span>: <span class="hljs-number">1</span>,<br>        <span class="hljs-string">'c'</span>: <span class="hljs-number">1</span>,<br>        <span class="hljs-string">'hello'</span>: <span class="hljs-number">1</span>, <span class="hljs-comment"># here</span><br>        <span class="hljs-string">'gpu'</span>: <span class="hljs-number">2</span>,<br>        <span class="hljs-string">'cuda'</span>: <span class="hljs-number">2</span>,<br>        <span class="hljs-comment"># ......</span><br>        <span class="hljs-string">'micro_dev'</span>: <span class="hljs-number">13</span>,<br>    }<br></code></pre></td></tr></table></figure>
+
+<p>在<code>src/target/target.cc</code>中的<code>tvm::CreateTarget</code>里添加一项判断：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">if</span> (target_name == <span class="hljs-string">"c"</span> &amp;&amp; t-&gt;device_name == <span class="hljs-string">"micro_dev"</span>) {<br>    t-&gt;device_type = kDLMicroDev;<br>  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (target_name == <span class="hljs-string">"c"</span> || target_name == <span class="hljs-string">"llvm"</span>) {<br>    t-&gt;keys_array.<span class="hljs-built_in">push_back</span>(tir::StringImmNode::<span class="hljs-built_in">make</span>(<span class="hljs-string">"cpu"</span>));<br>  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (target_name == <span class="hljs-string">"cuda"</span> || target_name == <span class="hljs-string">"nvptx"</span>) {<br>    t-&gt;device_type = kDLGPU;<br>    t-&gt;keys_array.<span class="hljs-built_in">push_back</span>(tir::StringImmNode::<span class="hljs-built_in">make</span>(<span class="hljs-string">"cuda"</span>));<br>    t-&gt;keys_array.<span class="hljs-built_in">push_back</span>(tir::StringImmNode::<span class="hljs-built_in">make</span>(<span class="hljs-string">"gpu"</span>));<br>    t-&gt;max_num_threads = <span class="hljs-number">1024</span>;<br>    t-&gt;thread_warp_size = <span class="hljs-number">32</span>;<br>  <span class="hljs-comment">// ......</span><br>  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (target_name == <span class="hljs-string">"hybrid"</span>) {<br>    t-&gt;device_type = kDLCPU;<br>  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (target_name == <span class="hljs-string">"hello"</span>) { <span class="hljs-comment">// here</span><br>    t-&gt;device_type = kDLCPU;<br>  } <span class="hljs-keyword">else</span> {<br>    <span class="hljs-built_in">LOG</span>(ERROR) &lt;&lt; <span class="hljs-string">"Unknown target name "</span> &lt;&lt; target_name;<br>    <span class="hljs-keyword">return</span> target::<span class="hljs-built_in">stackvm</span>();<br>  }<br></code></pre></td></tr></table></figure>
+
+<h2 id="改写cmake文件"><a href="#改写cmake文件" class="headerlink" title="改写cmake文件"></a>改写cmake文件</h2><p>最后一步就是将我们新增的模块集成到原本的项目构建系统中。</p>
+<p>首先在<code>cmake/modules/contrib/</code>中添加<code>Hello.cmake</code>文件，将我们的源文件加入编译列表。</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">list</span>(APPEND RUNTIME_SRCS src/runtime/contrib/hello/hello_module.cc)<br><span class="hljs-keyword">list</span>(APPEND COMPILER_SRCS src/runtime/contrib/hello/hello_module.cc)<br><span class="hljs-keyword">message</span>(STATUS <span class="hljs-string">"Build with Hello support"</span>)<br></code></pre></td></tr></table></figure>
+
+<p>在<code>CMakeList.txt</code>中添加一项：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">include</span>(cmake/modules/contrib/Hello.cmake)<br></code></pre></td></tr></table></figure>
+
+<p>至此大功告成。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><p>可以针对Relay和TIR两种IR进行代码生成。推荐针对TIR生成代码，这样可以复用大量的前端/后端代码。</p>
+</li>
+<li><p>对TIR生成代码主要需要以下步骤：</p>
+</li>
+<li><p>实现后端模块，用于运行代码。</p>
+</li>
+<li><p>实现翻译单元，用于代码生成。</p>
+</li>
+<li><p>注册接口函数，给TVM其他部分调用。</p>
+</li>
+<li><p>适当修改其他部分的代码。</p>
+</li>
+<li><p>改写cmake文件。</p>
+</li>
+</ul>
+<p>附上<code>hello_module.cc</code>的内容：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;tvm/runtime/module.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;tvm/tir/lowered_func.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;tvm/node/container.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;tvm/runtime/registry.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">"../../../target/source/codegen_c.h"</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><br><span class="hljs-keyword">namespace</span> tvm {<br><br><span class="hljs-keyword">namespace</span> codegen {<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CodeGenHello</span> : <span class="hljs-keyword">public</span> CodeGenC {<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function">std::string <span class="hljs-title">Finish</span><span class="hljs-params">()</span> </span>{<br>    decl_stream &lt;&lt; <span class="hljs-string">"// hello tvm backend!"</span> &lt;&lt; std::endl;<br>    <span class="hljs-keyword">return</span> CodeGenC::<span class="hljs-built_in">Finish</span>();<br>  }<br>};<br><br>}<br><br><span class="hljs-keyword">namespace</span> runtime {<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">HelloModuleNode</span> : <span class="hljs-keyword">public</span> ModuleNode {<br><span class="hljs-keyword">public</span>:<br>  <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">HelloModuleNode</span><span class="hljs-params">(std::string code)</span> : code_(std::move(code)) {</span>}<br>  <span class="hljs-function"><span class="hljs-type">const</span> <span class="hljs-type">char</span> *<span class="hljs-title">type_key</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> <span class="hljs-keyword">final</span> </span>{<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">"hello"</span>;<br>  }<br>  <span class="hljs-function">PackedFunc <span class="hljs-title">GetFunction</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">      <span class="hljs-type">const</span> std::string &amp;name,</span></span><br><span class="hljs-params"><span class="hljs-function">      <span class="hljs-type">const</span> ObjectPtr&lt;Object&gt; &amp;sptr_to_self)</span> <span class="hljs-keyword">final</span> </span>{<br>    <span class="hljs-keyword">auto</span> code = code_;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">PackedFunc</span>([code](TVMArgs args, TVMRetValue *ret) {<br>      std::cout &lt;&lt; code &lt;&lt; std::endl;<br>    });<br>  }<br>  <span class="hljs-function">std::string <span class="hljs-title">GetSource</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string &amp;format)</span> <span class="hljs-keyword">final</span> </span>{<br>    <span class="hljs-keyword">return</span> code_;<br>  }<br><span class="hljs-keyword">private</span>:<br>  std::string code_;<br>};<br><br><span class="hljs-function">Module <span class="hljs-title">BulidHello</span><span class="hljs-params">(Array&lt;tir::LoweredFunc&gt; funcs, <span class="hljs-type">const</span> std::string &amp;target)</span> </span>{<br>  codegen::CodeGenHello cg;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> &amp;f : funcs)<br>    cg.<span class="hljs-built_in">AddFunction</span>(f);<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Module</span>(<span class="hljs-built_in">make_object</span>&lt;HelloModuleNode&gt;(cg.<span class="hljs-built_in">Finish</span>()));<br>}<br><br><span class="hljs-built_in">TVM_REGISTER_GLOBAL</span>(<span class="hljs-string">"codegen.build_hello"</span>)<br>.<span class="hljs-built_in">set_body_typed</span>(BulidHello);<br><br>}<br><br>}<br></code></pre></td></tr></table></figure><div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/2020/06/28/%E4%BD%9C%E6%AD%BB%E5%90%91%EF%BC%9A%E4%BF%AE%E6%94%B9TVM%E7%9A%84%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">← Next 作死向：修改TVM的底层数据结构</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/2020/02/17/Y%E7%BB%84%E5%90%88%E5%AD%90%EF%BC%88%E4%B8%8D%E5%8A%A8%E7%82%B9%E7%BB%84%E5%90%88%E5%AD%90%EF%BC%89%E7%9A%84%E7%AE%80%E5%8D%95%E6%8E%A8%E5%AF%BC/">Y组合子（不动点组合子）的简单推导 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a target="_blank" rel="noopener" href="https://prts.wiki/w/%E6%96%87%E4%BB%B6:%E6%A8%A1%E7%BB%84_%E5%8C%BB%E4%B8%8D%E8%87%AA%E6%B2%BB.png" id="logo"><img src="/imgs/avatar.png" alt="Logo"></a><h1 id="Dr"><a href="/">Renze Chen</a></h1><div id="description"><p>陈仁泽</p></div><div id="social-links"><a class="social" target="_blank" rel="noopener" href="https://github.com/Light-of-Hers"><i class="fab fa-github" alt="GitHub"></i></a><a class="social" target="_blank" rel="noopener" href="https://www.zhihu.com/people/yi-guang-99-48"><i class="fab fa-zhihu" alt="Zhihu"></i></a><a class="social" target="_blank" rel="noopener" href="https://orcid.org/0000-0001-5938-7965"><i class="fab fa-orcid" alt="ORCID"></i></a><a class="social" target="_blank" rel="noopener" href="https://dblp.org/pid/260/5910"><i class="iconfont icon-dblp" alt="DBLP"></i></a><a class="social" href="mailto:crz@pku.edu.cn"><i class="fa fa-envelope" alt="E-Mail"></i></a></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codegen%E6%89%80%E9%92%88%E5%AF%B9%E7%9A%84IR"><span class="toc-number">2.</span> <span class="toc-text">Codegen所针对的IR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E6%A8%A1%E5%9D%97%E6%96%87%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">新建模块文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%90%8E%E7%AB%AF%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">实现后端模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%BF%BB%E8%AF%91%E5%8D%95%E5%85%83"><span class="toc-number">5.</span> <span class="toc-text">实现翻译单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E6%8E%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="toc-number">6.</span> <span class="toc-text">注册接口函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%AE%BE%E5%A4%87%E7%B1%BB%E5%9E%8B"><span class="toc-number">7.</span> <span class="toc-text">添加设备类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E5%86%99cmake%E6%96%87%E4%BB%B6"><span class="toc-number">8.</span> <span class="toc-text">改写cmake文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main></body></html>

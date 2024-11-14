@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="en" theme-mode="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>C++模板元编程中的代数数据类型(ADT)及模式匹配等操作：以编译期AVL树为例 | Renze Chen (陈仁泽)</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: local('Fira Code'), url('/font/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'Monaco';
+  src: local('Monaco'), url('/font/Monaco.ttf');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/imgs/bk-dark-0.png');
+ --light-background: url('/imgs/bk-light-5.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">About</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Blogs</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>C++模板元编程中的代数数据类型(ADT)及模式匹配等操作：以编译期AVL树为例</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2020-01-21T11:11:00.000Z" id="date"> 2020-01-21</time></div></span><br><span>Blog Link: <div class="control"> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/103701503">[site]</a></div></span></div></div><hr><div id="post-content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>众所周知C++是可以在编译期进行用户可控的图灵完全计算的，其方法主要是利用模板元编程(TMP)，以及在C++11出现并在C++14和C++17中不断增强的<code>constexpr</code>相关的语法（关于这个，clang的源码中有个很有意思的测试样例：a href=”<a href="https://link.zhihu.com/?target=https://github.com/llvm-mirror/clang/blob/master/test/SemaCXX/constexpr-turing.cpp">https://github.com/llvm-mirror/clang/blob/master/test/SemaCXX/constexpr-turing.cpp</a>“&gt;用constexpr实现编译期图灵机）。其中<code>constexpr</code>在使用上会更加简洁，而TMP写起来则繁杂些。不过TMP在形式上支持一些比较先进的PL原语，比如模式匹配，这是单纯用<code>constexpr</code>做不到的。</p>
+<p>前几天学习OCaml的时候用OCaml实现了一个函数式AVL树，事后想了想好像用C++的TMP也可以实现个类似的编译期AVL树，试着做了一下，发现将OCaml中的ADT以及基于模式匹配的对于ADT的操作转化到TMP竟然出乎意料地顺滑。于是便写此文章，以编译期AVL树为例，展现一下用TMP实现ADT的简易性。</p>
+<p>关于AVL树的定义与操作，如有需要请自行搜索，本文不提供详细说明。</p>
+<hr>
+<h2 id="AVL树定义"><a href="#AVL树定义" class="headerlink" title="AVL树定义"></a>AVL树定义</h2><p>首先是定义AVL树的ADT。</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">type</span> avl_tree =<br>  | <span class="hljs-type">AvlNull</span><br>  | <span class="hljs-type">AvlNode</span> <span class="hljs-keyword">of</span> <span class="hljs-built_in">int</span> * <span class="hljs-built_in">int</span> * avl_tree * avl_tree<br><br><span class="hljs-keyword">let</span> avl_height t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNull</span> -&gt; <span class="hljs-number">0</span><br>  | <span class="hljs-type">AvlNode</span> (h, _, _, _) -&gt; h<br>;;<br><br><span class="hljs-keyword">let</span> avl_node v l r = <span class="hljs-type">AvlNode</span> (max (avl_height l) (avl_height r) + <span class="hljs-number">1</span>, v, l, r)<br></code></pre></td></tr></table></figure>
+
+<p>其中<code>avl_node</code>是AvlNode的构造器，<code>avl_height</code>是<code>avl_tree</code>的树高属性的萃取器。</p>
+<p>转化为C++ TMP代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_tree</span> {};<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_null</span> : <span class="hljs-keyword">public</span> avl_tree {<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> height = <span class="hljs-number">0</span>;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V, <span class="hljs-keyword">typename</span> L, <span class="hljs-keyword">typename</span> R&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_node</span> : <span class="hljs-keyword">public</span> avl_tree {<br>    <span class="hljs-built_in">static_assert</span>(std::is_base_of_v&lt;avl_tree, L&gt; &amp;&amp; std::is_base_of_v&lt;avl_tree, R&gt;);<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> height = std::<span class="hljs-built_in">max</span>(L::height, R::height) + <span class="hljs-number">1</span>;<br>};<br></code></pre></td></tr></table></figure>
+
+<p>其中用继承来表现variant。</p>
+<p>这里和OCaml的实现有点不同，将树高作为类的静态常量保存，不过无伤大雅。</p>
+<p>在<code>avl_node</code>的构造中会对模板参数<code>L</code>和<code>R</code>进行检查，保证其为<code>avl_tree</code>。</p>
+<hr>
+<h2 id="AVL树操作"><a href="#AVL树操作" class="headerlink" title="AVL树操作"></a>AVL树操作</h2><h3 id="元素查询"><a href="#元素查询" class="headerlink" title="元素查询"></a>元素查询</h3><p>OCaml的代码非常直接：</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> avl_query i t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNode</span> (_, v, l, r) -&gt;<br>    <span class="hljs-keyword">if</span> i &lt; v <span class="hljs-keyword">then</span> avl_query i l <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> i &gt; v <span class="hljs-keyword">then</span> avl_query i r <span class="hljs-keyword">else</span> <span class="hljs-literal">true</span><br>  | _ -&gt; <span class="hljs-literal">false</span><br>;;<br></code></pre></td></tr></table></figure>
+
+<p>可以用模板偏特化来实现模式匹配。其中：</p>
+<ul>
+<li>类模板的基础定义可以表示模式匹配中的缺省情况（如下面的<code>static constexpr bool value = false;</code>）。</li>
+<li>对模板的不同形式的偏特化可以表示模式匹配的不同模式。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I, <span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_query</span> : <span class="hljs-keyword">public</span> avl_operation&lt;T&gt; {<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">bool</span> value = <span class="hljs-literal">false</span>;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I, <span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">bool</span> avl_query_v = avl_query&lt;I, T&gt;::value;<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V, <span class="hljs-keyword">typename</span> L, <span class="hljs-keyword">typename</span> R, <span class="hljs-type">int</span> I&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_query</span>&lt;I, avl_node&lt;V, L, R&gt;&gt; {<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">bool</span> value = I &lt; V ? avl_query_v&lt;I, L&gt; : I &gt; V ? avl_query_v&lt;I, R&gt; : <span class="hljs-literal">true</span>;<br>};<br></code></pre></td></tr></table></figure>
+
+<p>其中<code>avl_operation</code>主要用于检查模板参数是否为<code>avl_tree</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_operation</span> {<br>    <span class="hljs-built_in">static_assert</span>(std::is_base_of_v&lt;avl_tree, T&gt;);<br>};<br></code></pre></td></tr></table></figure>
+
+<h3 id="旋转调整"><a href="#旋转调整" class="headerlink" title="旋转调整"></a>旋转调整</h3><p>针对AVL树四种需要旋转的模式进行调整：</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> avl_adjust t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNode</span> (_, v1, <span class="hljs-type">AvlNode</span> (h2, v2, a, b), c)<br>    <span class="hljs-keyword">when</span> h2 &gt; avl_height c + <span class="hljs-number">1</span> &amp;&amp; avl_height a &gt;= avl_height b -&gt;<br>    avl_node v2 a (avl_node v1 b c)<br>  | <span class="hljs-type">AvlNode</span> (_, v1, a, <span class="hljs-type">AvlNode</span> (h2, v2, b, c))<br>    <span class="hljs-keyword">when</span> h2 &gt; avl_height a + <span class="hljs-number">1</span> &amp;&amp; avl_height c &gt;= avl_height b -&gt;<br>    avl_node v2 (avl_node v1 a b) c<br>  | <span class="hljs-type">AvlNode</span> (_, v1, <span class="hljs-type">AvlNode</span> (h2, v2, a, <span class="hljs-type">AvlNode</span> (h3, v3, b, c)), d)<br>    <span class="hljs-keyword">when</span> h2 &gt; avl_height d + <span class="hljs-number">1</span> &amp;&amp; h3 &gt; avl_height a -&gt;<br>    avl_node v3 (avl_node v2 a b) (avl_node v1 c d)<br>  | <span class="hljs-type">AvlNode</span> (_, v1, a, <span class="hljs-type">AvlNode</span> (h2, v2, <span class="hljs-type">AvlNode</span> (h3, v3, b, c), d))<br>    <span class="hljs-keyword">when</span> h2 &gt; avl_height a + <span class="hljs-number">1</span> &amp;&amp; h3 &gt; avl_height d -&gt;<br>    avl_node v3 (avl_node v1 a b) (avl_node v2 c d)<br>  | _ -&gt; t<br>;;<br></code></pre></td></tr></table></figure>
+
+<p>OCaml的代码中用到了模式匹配的<code>when</code>子句，这个可用<code>std::enable_if</code>来模拟：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> = <span class="hljs-type">void</span>&gt;<br><span class="hljs-keyword">struct</span> avl_adjust : <span class="hljs-keyword">public</span> avl_operation&lt;T&gt; {<br>    <span class="hljs-keyword">using</span> type = T;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">using</span> <span class="hljs-type">avl_adjust_t</span> = <span class="hljs-keyword">typename</span> avl_adjust&lt;T&gt;::type;<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V1, <span class="hljs-type">int</span> V2, <span class="hljs-keyword">typename</span> A, <span class="hljs-keyword">typename</span> B, <span class="hljs-keyword">typename</span> C&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_adjust</span>&lt;avl_node&lt;V1, avl_node&lt;V2, A, B&gt;, C&gt;,<br>        std::<span class="hljs-type">enable_if_t</span>&lt;(avl_node&lt;V2, A, B&gt;::height &gt; C::height + <span class="hljs-number">1</span> &amp;&amp;<br>                          A::height &gt;= B::height)&gt;&gt; {<br>    <span class="hljs-keyword">using</span> type = avl_node&lt;V2, A, avl_node&lt;V1, B, C&gt;&gt;;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V1, <span class="hljs-type">int</span> V2, <span class="hljs-keyword">typename</span> A, <span class="hljs-keyword">typename</span> B, <span class="hljs-keyword">typename</span> C&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_adjust</span>&lt;avl_node&lt;V1, A, avl_node&lt;V2, B, C&gt;&gt;,<br>        std::<span class="hljs-type">enable_if_t</span>&lt;(avl_node&lt;V2, B, C&gt;::height &gt; A::height + <span class="hljs-number">1</span> &amp;&amp;<br>                          C::height &gt;= B::height)&gt;&gt; {<br>    <span class="hljs-keyword">using</span> type = avl_node&lt;V2, avl_node&lt;V1, A, B&gt;, C&gt;;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V1, <span class="hljs-type">int</span> V2, <span class="hljs-type">int</span> V3, <span class="hljs-keyword">typename</span> A, <span class="hljs-keyword">typename</span> B, <span class="hljs-keyword">typename</span> C, <span class="hljs-keyword">typename</span> D&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_adjust</span>&lt;avl_node&lt;V1, avl_node&lt;V2, A, avl_node&lt;V3, B, C&gt;&gt;, D&gt;,<br>        std::<span class="hljs-type">enable_if_t</span>&lt;(avl_node&lt;V2, A, avl_node&lt;V3, B, C&gt;&gt;::height &gt; D::height + <span class="hljs-number">1</span> &amp;&amp;<br>                          avl_node&lt;V3, B, C&gt;::height &gt; A::height)&gt;&gt; {<br>    <span class="hljs-keyword">using</span> type = avl_node&lt;V3, avl_node&lt;V2, A, B&gt;, avl_node&lt;V1, C, D&gt;&gt;;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V1, <span class="hljs-type">int</span> V2, <span class="hljs-type">int</span> V3, <span class="hljs-keyword">typename</span> A, <span class="hljs-keyword">typename</span> B, <span class="hljs-keyword">typename</span> C, <span class="hljs-keyword">typename</span> D&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_adjust</span>&lt;avl_node&lt;V1, A, avl_node&lt;V2, avl_node&lt;V3, B, C&gt;, D&gt;&gt;,<br>        std::<span class="hljs-type">enable_if_t</span>&lt;(avl_node&lt;V2, avl_node&lt;V3, B, C&gt;, D&gt;::height &gt; A::height + <span class="hljs-number">1</span> &amp;&amp;<br>                          avl_node&lt;V3, B, C&gt;::height &gt; D::height)&gt;&gt; {<br>    <span class="hljs-keyword">using</span> type = avl_node&lt;V3, avl_node&lt;V1, A, B&gt;, avl_node&lt;V2, C, D&gt;&gt;;<br>};<br></code></pre></td></tr></table></figure>
+
+<p>该段代码可以很好地展现C++ TMP对模式匹配的支持。</p>
+<h3 id="插入元素"><a href="#插入元素" class="headerlink" title="插入元素"></a>插入元素</h3><p>OCaml代码：</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> avl_insert i t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNode</span> (_, v, l, r) -&gt;<br>    <span class="hljs-keyword">if</span> i &lt; v<br>    <span class="hljs-keyword">then</span> avl_adjust @@ avl_node v (avl_insert i l) r<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> i &gt; v<br>    <span class="hljs-keyword">then</span> avl_adjust @@ avl_node v l (avl_insert i r)<br>    <span class="hljs-keyword">else</span> t<br>  | _ -&gt; avl_node i <span class="hljs-type">AvlNull</span> <span class="hljs-type">AvlNull</span><br>;;<br></code></pre></td></tr></table></figure>
+
+<p>注意多段的条件判断单纯使用C++ TMP不是很好实现，因为<code>std::conditional</code>会对两个分支都求值，而直接用模板匹配来实现这么多个分支又太过繁琐。因此借助了一些<code>constexpr</code>相关语法的帮助，让实现更加简洁：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I, <span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_insert</span> : <span class="hljs-keyword">public</span> avl_operation&lt;T&gt; {<br>    <span class="hljs-keyword">using</span> type = avl_node&lt;I, avl_null, avl_null&gt;;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I, <span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">using</span> <span class="hljs-type">avl_insert_t</span> = <span class="hljs-keyword">typename</span> avl_insert&lt;I, T&gt;::type;<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V, <span class="hljs-keyword">typename</span> L, <span class="hljs-keyword">typename</span> R, <span class="hljs-type">int</span> I&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_insert</span>&lt;I, avl_node&lt;V, L, R&gt;&gt; {<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-keyword">auto</span> <span class="hljs-title">infer</span><span class="hljs-params">()</span> </span>{<br>        <span class="hljs-function"><span class="hljs-keyword">if</span> <span class="hljs-title">constexpr</span> <span class="hljs-params">(I &lt; V)</span> </span>{<br>            <span class="hljs-keyword">return</span> <span class="hljs-type">avl_adjust_t</span>&lt;avl_node&lt;V, <span class="hljs-type">avl_insert_t</span>&lt;I, L&gt;, R&gt;&gt;{};<br>        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-built_in">constexpr</span> (I &gt; V) {<br>            <span class="hljs-keyword">return</span> <span class="hljs-type">avl_adjust_t</span>&lt;avl_node&lt;V, L, <span class="hljs-type">avl_insert_t</span>&lt;I, R&gt;&gt;&gt;{};<br>        } <span class="hljs-keyword">else</span> {<br>            <span class="hljs-keyword">return</span> avl_node&lt;V, L, R&gt;{};<br>        }<br>    }<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> type = <span class="hljs-keyword">decltype</span>(<span class="hljs-built_in">infer</span>());<br>};<br></code></pre></td></tr></table></figure>
+
+<h3 id="最大值-最小值"><a href="#最大值-最小值" class="headerlink" title="最大值/最小值"></a>最大值/最小值</h3><p>实现非常简单，主要是为删除元素做铺垫。</p>
+<p>OCaml实现：</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> avl_max t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNode</span> (_, v, l, r) -&gt; max v @@ avl_max r<br>  | _ -&gt; min_int<br>;;<br><br><span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> avl_min t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNode</span> (_, v, l, r) -&gt; min v @@ avl_min l<br>  | _ -&gt; max_int<br>;;<br></code></pre></td></tr></table></figure>
+
+<p>C++实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_extreme</span> : <span class="hljs-keyword">public</span> avl_operation&lt;T&gt; {<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> max_value = std::numeric_limits&lt;<span class="hljs-type">int</span>&gt;::<span class="hljs-built_in">min</span>();<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> min_value = std::numeric_limits&lt;<span class="hljs-type">int</span>&gt;::<span class="hljs-built_in">max</span>();<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> avl_max_v = avl_extreme&lt;T&gt;::max_value;<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> avl_min_v = avl_extreme&lt;T&gt;::min_value;<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V, <span class="hljs-keyword">typename</span> L, <span class="hljs-keyword">typename</span> R&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_extreme</span>&lt;avl_node&lt;V, L, R&gt;&gt; {<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> max_value = std::<span class="hljs-built_in">max</span>(V, avl_max_v&lt;R&gt;);<br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> min_value = std::<span class="hljs-built_in">min</span>(V, avl_min_v&lt;L&gt;);<br>};<br></code></pre></td></tr></table></figure>
+
+<h3 id="删除元素"><a href="#删除元素" class="headerlink" title="删除元素"></a>删除元素</h3><p>直接上代码吧……</p>
+<p>OCaml代码：</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> avl_remove i t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNode</span> (_, v, l, r) -&gt;<br>    <span class="hljs-keyword">if</span> i &lt; v<br>    <span class="hljs-keyword">then</span> avl_adjust @@ avl_node v (avl_remove i l) r<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> i &gt; v<br>    <span class="hljs-keyword">then</span> avl_adjust @@ avl_node v l (avl_remove i r)<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> l == <span class="hljs-type">AvlNull</span><br>    <span class="hljs-keyword">then</span> r<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> r == <span class="hljs-type">AvlNull</span><br>    <span class="hljs-keyword">then</span> l<br>    <span class="hljs-keyword">else</span> (<br>      <span class="hljs-keyword">let</span> nv = avl_min r <span class="hljs-keyword">in</span><br>      avl_adjust @@ avl_node nv l (avl_remove nv r))<br>  | _ -&gt; t<br>;;<br></code></pre></td></tr></table></figure>
+
+<p>C++代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I, <span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_remove</span> : <span class="hljs-keyword">public</span> avl_operation&lt;T&gt; {<br>    <span class="hljs-keyword">using</span> type = T;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I, <span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">using</span> <span class="hljs-type">avl_remove_t</span> = <span class="hljs-keyword">typename</span> avl_remove&lt;I, T&gt;::type;<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V, <span class="hljs-keyword">typename</span> L, <span class="hljs-keyword">typename</span> R, <span class="hljs-type">int</span> I&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_remove</span>&lt;I, avl_node&lt;V, L, R&gt;&gt; {<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-keyword">auto</span> <span class="hljs-title">infer</span><span class="hljs-params">()</span> </span>{<br>        <span class="hljs-function"><span class="hljs-keyword">if</span> <span class="hljs-title">constexpr</span> <span class="hljs-params">(I &lt; V)</span> </span>{<br>            <span class="hljs-keyword">return</span> <span class="hljs-type">avl_adjust_t</span>&lt;avl_node&lt;V, <span class="hljs-type">avl_remove_t</span>&lt;I, L&gt;, R&gt;&gt;{};<br>        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-built_in">constexpr</span> (I &gt; V) {<br>            <span class="hljs-keyword">return</span> <span class="hljs-type">avl_adjust_t</span>&lt;avl_node&lt;V, L, <span class="hljs-type">avl_remove_t</span>&lt;I, R&gt;&gt;&gt;{};<br>        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-built_in">constexpr</span> (std::is_same_v&lt;L, avl_null&gt;) {<br>            <span class="hljs-keyword">return</span> R{};<br>        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-built_in">constexpr</span> (std::is_same_v&lt;R, avl_null&gt;) {<br>            <span class="hljs-keyword">return</span> L{};<br>        } <span class="hljs-keyword">else</span> {<br>            <span class="hljs-keyword">constexpr</span> <span class="hljs-type">int</span> NV = avl_min_v&lt;R&gt;;<br>            <span class="hljs-keyword">return</span> <span class="hljs-type">avl_adjust_t</span>&lt;avl_node&lt;NV, L, <span class="hljs-type">avl_remove_t</span>&lt;NV, R&gt;&gt;&gt;{};<br>        }<br>    }<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> type = <span class="hljs-keyword">decltype</span>(<span class="hljs-built_in">infer</span>());<br>};<br></code></pre></td></tr></table></figure>
+
+<p>其中用利用<code>constexpr</code>变量可以实现<code>let ... in ...</code>这样的局部绑定。</p>
+<hr>
+<h2 id="简单测试"><a href="#简单测试" class="headerlink" title="简单测试"></a>简单测试</h2><h3 id="OCaml部分"><a href="#OCaml部分" class="headerlink" title="OCaml部分"></a>OCaml部分</h3><p>先定义打印AVL树的函数：</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> avl_print ?(depth = <span class="hljs-number">0</span>) t =<br>  <span class="hljs-keyword">match</span> t <span class="hljs-keyword">with</span><br>  | <span class="hljs-type">AvlNode</span> (_, v, l, r) -&gt;<br>    print_string @@ <span class="hljs-type">String</span>.make (depth * <span class="hljs-number">2</span>) <span class="hljs-string">'-'</span> ^ string_of_int v;<br>    print_newline <span class="hljs-literal">()</span>;<br>    avl_print l ~depth:(depth + <span class="hljs-number">1</span>);<br>    avl_print r ~depth:(depth + <span class="hljs-number">1</span>)<br>  | _ -&gt; <span class="hljs-literal">()</span><br></code></pre></td></tr></table></figure>
+
+<p>之后构造简单的测试样例：先按顺序插入1~10，之后删除1,3,5。</p>
+<figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs ocaml"><span class="hljs-keyword">let</span> t =<br>  <span class="hljs-type">List</span>.init <span class="hljs-number">10</span> (<span class="hljs-keyword">fun</span> x -&gt; x + <span class="hljs-number">1</span>) |&gt; <span class="hljs-type">List</span>.fold_left (<span class="hljs-keyword">fun</span> t x -&gt; avl_insert x t) <span class="hljs-type">AvlNull</span><br><span class="hljs-keyword">in</span><br>avl_print t;<br>print_newline <span class="hljs-literal">()</span>;<br>avl_remove <span class="hljs-number">1</span> t |&gt; avl_remove <span class="hljs-number">3</span> |&gt; avl_remove <span class="hljs-number">5</span> |&gt; avl_print;<br></code></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs text">4<br>--2<br>----1<br>----3<br>--8<br>----6<br>------5<br>------7<br>----9<br>------10<br><br>8<br>--4<br>----2<br>----6<br>------7<br>--9<br>----10<br></code></pre></td></tr></table></figure>
+
+<h3 id="C-部分"><a href="#C-部分" class="headerlink" title="C++部分"></a>C++部分</h3><p>定义打印函数，以及用于构造连续插入1~n的AVL树的元函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_printer</span> : <span class="hljs-keyword">public</span> avl_operation&lt;T&gt; {<br>    <span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-type">int</span> depth = <span class="hljs-number">0</span>)</span> </span>{}<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> V, <span class="hljs-keyword">typename</span> L, <span class="hljs-keyword">typename</span> R&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_printer</span>&lt;avl_node&lt;V, L, R&gt;&gt; {<br>    <span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-type">int</span> depth = <span class="hljs-number">0</span>)</span> </span>{<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; depth; ++i)<br>            std::cout &lt;&lt; <span class="hljs-string">"--"</span>;<br>        std::cout &lt;&lt; V &lt;&lt; std::endl;<br>        avl_printer&lt;L&gt;::<span class="hljs-built_in">print</span>(depth + <span class="hljs-number">1</span>);<br>        avl_printer&lt;R&gt;::<span class="hljs-built_in">print</span>(depth + <span class="hljs-number">1</span>);<br>    }<br>};<br><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_build_range</span>;<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I&gt;<br><span class="hljs-keyword">using</span> <span class="hljs-type">avl_build_range_t</span> = <span class="hljs-keyword">typename</span> avl_build_range&lt;I&gt;::type;<br><span class="hljs-keyword">template</span>&lt;&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_build_range</span>&lt;<span class="hljs-number">0</span>&gt; {<br>    <span class="hljs-keyword">using</span> type = avl_null;<br>};<br><span class="hljs-keyword">template</span>&lt;<span class="hljs-type">int</span> I&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">avl_build_range</span> {<br>    <span class="hljs-keyword">using</span> type = <span class="hljs-type">avl_insert_t</span>&lt;I, <span class="hljs-type">avl_build_range_t</span>&lt;I - <span class="hljs-number">1</span>&gt;&gt;;<br>};<br></code></pre></td></tr></table></figure>
+
+<p>之后构造简单测试：插入1~10，之后删除1,3,5：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{<br>    <span class="hljs-keyword">using</span> t = <span class="hljs-type">avl_build_range_t</span>&lt;<span class="hljs-number">10</span>&gt;;<br>    avl_printer&lt;t&gt;::<span class="hljs-built_in">print</span>();<br>    std::cout &lt;&lt; std::endl;<br>    avl_printer&lt;<span class="hljs-type">avl_remove_t</span>&lt;<span class="hljs-number">5</span>, <span class="hljs-type">avl_remove_t</span>&lt;<span class="hljs-number">3</span>, <span class="hljs-type">avl_remove_t</span>&lt;<span class="hljs-number">1</span>, t&gt;&gt;&gt;&gt;::<span class="hljs-built_in">print</span>();<br>}<br></code></pre></td></tr></table></figure>
+
+<p>打印结果和OCaml的一样（废话……）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs text">4<br>--2<br>----1<br>----3<br>--8<br>----6<br>------5<br>------7<br>----9<br>------10<br><br>8<br>--4<br>----2<br>----6<br>------7<br>--9<br>----10<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本文旨在结合ADT、模式匹配等比较先进的PL概念，提供一些定义C++编译期数据结构的思路和较为简洁的写法。至于编译期AVL树则纯属玩具（毕竟对编译时间的影响还是挺大的，而且一般编译器的模板运算递归深度顶多一两千），看着图一乐就行了。</p>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/2020/02/05/Y-combinator%20in%20Racket%20supporting%20variant%20arguments/">← Next Y-combinator in Racket supporting variant arguments</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/2020/01/17/C++%E4%B8%AD%E6%9F%AF%E9%87%8C%E5%8C%96(curry)%E4%B8%8E%E5%81%8F%E5%BA%94%E7%94%A8(partial)%E7%9A%84%E5%AE%9E%E7%8E%B0/">C++中柯里化(curry)与偏应用(partial)的实现 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a target="_blank" rel="noopener" href="https://prts.wiki/w/%E6%96%87%E4%BB%B6:%E6%A8%A1%E7%BB%84_%E5%8C%BB%E4%B8%8D%E8%87%AA%E6%B2%BB.png" id="logo"><img src="/imgs/avatar.png" alt="Logo"></a><h1 id="Dr"><a href="/">Renze Chen</a></h1><div id="description"><p>陈仁泽</p></div><div id="social-links"><a class="social" target="_blank" rel="noopener" href="https://github.com/Light-of-Hers"><i class="fab fa-github" alt="GitHub"></i></a><a class="social" target="_blank" rel="noopener" href="https://www.zhihu.com/people/yi-guang-99-48"><i class="fab fa-zhihu" alt="Zhihu"></i></a><a class="social" target="_blank" rel="noopener" href="https://orcid.org/0000-0001-5938-7965"><i class="fab fa-orcid" alt="ORCID"></i></a><a class="social" target="_blank" rel="noopener" href="https://dblp.org/pid/260/5910"><i class="iconfont icon-dblp" alt="DBLP"></i></a><a class="social" href="mailto:crz@pku.edu.cn"><i class="fa fa-envelope" alt="E-Mail"></i></a></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AVL%E6%A0%91%E5%AE%9A%E4%B9%89"><span class="toc-number">2.</span> <span class="toc-text">AVL树定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AVL%E6%A0%91%E6%93%8D%E4%BD%9C"><span class="toc-number">3.</span> <span class="toc-text">AVL树操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%83%E7%B4%A0%E6%9F%A5%E8%AF%A2"><span class="toc-number">3.1.</span> <span class="toc-text">元素查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%8B%E8%BD%AC%E8%B0%83%E6%95%B4"><span class="toc-number">3.2.</span> <span class="toc-text">旋转调整</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E5%85%83%E7%B4%A0"><span class="toc-number">3.3.</span> <span class="toc-text">插入元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E5%80%BC-%E6%9C%80%E5%B0%8F%E5%80%BC"><span class="toc-number">3.4.</span> <span class="toc-text">最大值&#x2F;最小值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0"><span class="toc-number">3.5.</span> <span class="toc-text">删除元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E6%B5%8B%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">简单测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#OCaml%E9%83%A8%E5%88%86"><span class="toc-number">4.1.</span> <span class="toc-text">OCaml部分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E9%83%A8%E5%88%86"><span class="toc-number">4.2.</span> <span class="toc-text">C++部分</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main></body></html>

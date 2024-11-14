@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="en" theme-mode="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>作死向：修改TVM的底层数据结构 | Renze Chen (陈仁泽)</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: local('Fira Code'), url('/font/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'Monaco';
+  src: local('Monaco'), url('/font/Monaco.ttf');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/imgs/bk-dark-0.png');
+ --light-background: url('/imgs/bk-light-5.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">About</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Blogs</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>作死向：修改TVM的底层数据结构</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2020-06-28T03:15:00.000Z" id="date"> 2020-06-28</time></div></span><br><span>Blog Link: <div class="control"> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/151265644">[site]</a></div></span></div></div><hr><div id="post-content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近给某个新设备写TVM后端时，出于一些原因需要修改TVM底层的<code>DLDataType</code>的<code>lanes</code>的类型，将其从<code>uint16_t</code>改为<code>int32_t</code>（或者<code>uint32_t</code>），以支持较大长度的vectorization schedule。刚开始以为很简单，但改着改着发现很多地方都以一种非引用的方式牵涉到<code>DLDataType</code>，没改全的话运行时会出现莫名其妙的错误，结果这样不断调试不断修改，花了一天多时间才搞定。为纪念吾辈之努力（全部木大じゃない），谨以此文记录之。</p>
+<h2 id="作死过程"><a href="#作死过程" class="headerlink" title="作死过程"></a>作死过程</h2><h3 id="简单的修改"><a href="#简单的修改" class="headerlink" title="简单的修改"></a>简单的修改</h3><p>首先把<code>3rdparty/dlpack/include/dlpack/dlpack.h</code>的<code>DLDataType::lanes</code>改为<code>int32_t</code>（顺便把code和bits也都改成<code>uint16_t</code>，这样可以构成一个64-bits的packed-struct，方便跨域的传输）。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> {<br>  <span class="hljs-comment">/*!</span><br><span class="hljs-comment">   * \brief Type code of base types.</span><br><span class="hljs-comment">   * We keep it uint8_t instead of DLDataTypeCode for minimal memory</span><br><span class="hljs-comment">   * footprint, but the value should be one of DLDataTypeCode enum values.</span><br><span class="hljs-comment">   * */</span><br>  <span class="hljs-type">uint16_t</span> code; <span class="hljs-comment">// MARK</span><br>  <span class="hljs-comment">/*!</span><br><span class="hljs-comment">   * \brief Number of bits, common choices are 8, 16, 32.</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-type">uint16_t</span> bits; <span class="hljs-comment">// MARK</span><br>  <span class="hljs-comment">/*! \brief Number of lanes in the type, used for vector types. */</span><br>  <span class="hljs-type">int32_t</span> lanes; <span class="hljs-comment">// MARK</span><br>} DLDataType;<br></code></pre></td></tr></table></figure>
+
+<p>然后编译一下，有几个涉及类型转换地方的会报错，修改之：</p>
+<ul>
+<li><p><code>include/tvm/runtime/data_type.h:75</code>:</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">DataType</span>(<span class="hljs-type">int</span> code, <span class="hljs-type">int</span> bits, <span class="hljs-type">int</span> lanes) {<br>    data_.code = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">uint16_t</span>&gt;(code); <span class="hljs-comment">// MARK</span><br>    data_.bits = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">uint16_t</span>&gt;(bits); <span class="hljs-comment">// MARK</span><br>    data_.lanes = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">int32_t</span>&gt;(lanes); <span class="hljs-comment">// MARK</span><br>    <span class="hljs-keyword">if</span> (code == kBFloat) {<br>        <span class="hljs-built_in">CHECK_EQ</span>(bits, <span class="hljs-number">16</span>);<br>    }<br>}<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><code>include/tvm/runtime/serializer.h:41,46</code>:</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">Write</span><span class="hljs-params">(Stream* strm, <span class="hljs-type">const</span> DLDataType&amp; dtype)</span> </span>{<br>  Handler&lt;<span class="hljs-type">uint16_t</span>&gt;::<span class="hljs-built_in">Write</span>(strm, dtype.code); <span class="hljs-comment">// MARK</span><br>  Handler&lt;<span class="hljs-type">uint16_t</span>&gt;::<span class="hljs-built_in">Write</span>(strm, dtype.bits); <span class="hljs-comment">// MARK</span><br>  Handler&lt;<span class="hljs-type">int32_t</span>&gt;::<span class="hljs-built_in">Write</span>(strm, dtype.lanes); <span class="hljs-comment">// MARK</span><br>}<br><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">static</span> <span class="hljs-type">bool</span> <span class="hljs-title">Read</span><span class="hljs-params">(Stream* strm, DLDataType* dtype)</span> </span>{<br>    <span class="hljs-keyword">if</span> (!Handler&lt;<span class="hljs-type">uint16_t</span>&gt;::<span class="hljs-built_in">Read</span>(strm, &amp;(dtype-&gt;code))) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// MARK</span><br>    <span class="hljs-keyword">if</span> (!Handler&lt;<span class="hljs-type">uint16_t</span>&gt;::<span class="hljs-built_in">Read</span>(strm, &amp;(dtype-&gt;bits))) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// MARK</span><br>    <span class="hljs-keyword">if</span> (!Handler&lt;<span class="hljs-type">int32_t</span>&gt;::<span class="hljs-built_in">Read</span>(strm, &amp;(dtype-&gt;lanes))) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// MARK</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>}<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="Cython相关"><a href="#Cython相关" class="headerlink" title="Cython相关"></a>Cython相关</h3><p>之后编译就没问题了，但是运行时会出问题，原因在于python和C++的交互部分（主要是Cython代码）。在python部分用<code>grep</code>搜索一下<code>DLDataType</code>和<code>DataType</code>，发现以下几处需要修改的部分：</p>
+<ul>
+<li><p><code>python/tvm/_ffi/_cython/base.pxi:47</code>:</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cython">ctypedef struct DLDataType:<br>    uint16_t code # MARK<br>    uint16_t bits # MARK<br>    int32_t lanes # MARK<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><code>python/tvm/_ffi/runtime_ctypes.py:64</code>:</p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">_fields_ = [(<span class="hljs-string">"type_code"</span>, ctypes.c_uint16), <span class="hljs-comment"># MARK</span><br>            (<span class="hljs-string">"bits"</span>, ctypes.c_uint16), <span class="hljs-comment"># MARK</span><br>            (<span class="hljs-string">"lanes"</span>, ctypes.c_int32)] <span class="hljs-comment"># MARK</span><br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="LLVM生成的Host端代码"><a href="#LLVM生成的Host端代码" class="headerlink" title="LLVM生成的Host端代码"></a>LLVM生成的Host端代码</h3><p>之后可以正常地进行代码生成了（<code>tvm.build</code>），但一旦部署运行就会出问题，比如运行下面的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python">A = te.placeholder((<span class="hljs-number">101</span>,), dtype=<span class="hljs-string">"float32"</span>, name=<span class="hljs-string">"A"</span>)<br>B = te.compute((<span class="hljs-number">101</span>,), <span class="hljs-keyword">lambda</span> i: A[i] + <span class="hljs-number">1</span>, name=<span class="hljs-string">"B"</span>)<br>s = te.create_schedule([B.op])<br><br>fun = tvm.build(s, [A, B])<br>ctx = tvm.cpu(<span class="hljs-number">0</span>)<br>a_np = np.random.uniform(size=(<span class="hljs-number">101</span>,)).astype(A.dtype)<br>a = tvm.nd.array(a_np, ctx)<br>b = tvm.nd.array(np.zeros((<span class="hljs-number">101</span>,), dtype=B.dtype), ctx)<br>fun(a, b)<br></code></pre></td></tr></table></figure>
+
+<p>会报错：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">TVMError: Check failed: ret == 0 (-1 vs. 0) : Assert fail: (((tvm_struct_get(arg0, 0, 5) == (uint8)2) &amp;&amp; (tvm_struct_get(arg0, 0, 6) == (uint8)32)) &amp;&amp; (tvm_struct_get(arg0, 0, 7) == (uint16)1)), arg0.dtype is expected to be float32<br></code></pre></td></tr></table></figure>
+
+<p>尴尬的是从traceback上来看该错误是一个Foreign-Function-Call造成的，仅靠调试很难进行溯源。</p>
+<p>用<code>grep</code>搜索<code>dtype is expected to be</code>，发现了错误的可能来源：<code>src/tir/transforms/arg_binder.cc:170</code>，修改之：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C++">type_err_msg &lt;&lt; arg_name &lt;&lt; <span class="hljs-string">".dtype is expected to be "</span> &lt;&lt; dtype;<br>PrimExpr cond = (<span class="hljs-built_in">TVMArrayGet</span>(DataType::<span class="hljs-built_in">UInt</span>(<span class="hljs-number">16</span>), handle, intrinsic::kArrTypeCode) ==<br>                     <span class="hljs-built_in">IntImm</span>(DataType::<span class="hljs-built_in">UInt</span>(<span class="hljs-number">16</span>), dtype.<span class="hljs-built_in">code</span>()) &amp;&amp; <span class="hljs-comment">// MARK</span><br>                 <span class="hljs-built_in">TVMArrayGet</span>(DataType::<span class="hljs-built_in">UInt</span>(<span class="hljs-number">16</span>), handle, intrinsic::kArrTypeBits) ==<br>                     <span class="hljs-built_in">IntImm</span>(DataType::<span class="hljs-built_in">UInt</span>(<span class="hljs-number">16</span>), dtype.<span class="hljs-built_in">bits</span>()) &amp;&amp; <span class="hljs-comment">// MARK</span><br>                 <span class="hljs-built_in">TVMArrayGet</span>(DataType::<span class="hljs-built_in">Int</span>(<span class="hljs-number">32</span>), handle, intrinsic::kArrTypeLanes) ==<br>                     <span class="hljs-built_in">IntImm</span>(DataType::<span class="hljs-built_in">Int</span>(<span class="hljs-number">32</span>), dtype.<span class="hljs-built_in">lanes</span>())); <span class="hljs-comment">// MARK</span><br></code></pre></td></tr></table></figure>
+
+<p>但是这样修改一下，甚至连<code>tvm.build</code>都运行不了了，在LLVM/CPU代码生成（Host端代码生成）时会出问题。这里困惑了我很久，之后我把<code>arg_binder.cc</code>的修改取消后，查看了一下生成的LLVM IR才发现问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs asm">; ModuleID = 'TVMMod'<br>source_filename = "TVMMod"<br>target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"<br>target triple = "x86_64-pc-linux-gnu"<br><br>%0 = type { i8*, %1, i32, %2, i64*, i64*, i64 }<br>%1 = type { i32, i32 }<br>%2 = type { i8, i8, i16 } # MARK<br></code></pre></td></tr></table></figure>
+
+<p>原来TVM生成Host端代码时还会自己再构造一遍<code>DLTensor</code>、<code>DLContext</code>、<code>DLDataType</code>等底层结构（对应代码的<code>%0</code>、<code>%1</code>、<code>%2</code>）。</p>
+<p>这样一来就很好找了，直接用<code>grep</code>搜索<code>StructType::create</code>，很快就发现了错误来源：<code>src/target/llvm/codegen_cpu.c:47</code>，修改之：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">// TVM runtime types</span><br>t_tvm_shape_index_ = llvm::Type::<span class="hljs-built_in">getIntNTy</span>(*ctx, DataType::<span class="hljs-built_in">ShapeIndex</span>().<span class="hljs-built_in">bits</span>());<br>t_tvm_context_ = llvm::StructType::<span class="hljs-built_in">create</span>({t_int_, t_int_});<br>t_tvm_type_ = llvm::StructType::<span class="hljs-built_in">create</span>({t_int16_, t_int16_, t_int32_}); <span class="hljs-comment">// MARK</span><br>t_tvm_func_handle_ = t_void_p_;<br>t_tvm_array_ = llvm::StructType::<span class="hljs-built_in">create</span>({t_void_p_, t_tvm_context_, t_int_, t_tvm_type_,<br>                                         t_tvm_shape_index_-&gt;<span class="hljs-built_in">getPointerTo</span>(),<br>                                         t_tvm_shape_index_-&gt;<span class="hljs-built_in">getPointerTo</span>(), t_int64_});<br>t_tvm_value_ = llvm::StructType::<span class="hljs-built_in">create</span>({t_float64_});<br>t_tvm_parallel_group_env_ = llvm::StructType::<span class="hljs-built_in">create</span>({t_int32_-&gt;<span class="hljs-built_in">getPointerTo</span>(), t_int32_});<br>ftype_tvm_parallel_lambda_ = llvm::FunctionType::<span class="hljs-built_in">get</span>(<br>    t_int_, {t_int_, t_tvm_parallel_group_env_-&gt;<span class="hljs-built_in">getPointerTo</span>(), t_void_p_}, <span class="hljs-literal">false</span>);<br>md_tbaa_ctx_ptr_ = md_builder_-&gt;<span class="hljs-built_in">createTBAAScalarTypeNode</span>(<span class="hljs-string">"ctx_ptr"</span>, md_tbaa_root_);<br></code></pre></td></tr></table></figure>
+
+<p>改完之后就可以正常进行代码生成以及运行了。</p>
+<h3 id="RPC数据传输"><a href="#RPC数据传输" class="headerlink" title="RPC数据传输"></a>RPC数据传输</h3><p>过了一段时间，用autotvm的时候又出了问题，根据报错信息溯源，问题似乎出在tvm的RPC模块，想必是跟<code>DLDataType</code>的数据读写有关。在RPC部分（<code>src/runtime/rpc/</code>）搜索<code>DLDataType</code>和<code>kTVMDataType</code>，很快就发现了问题源头，在<code>src/runtime/rpc/rpc_protocol:225,344</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">case</span> kTVMDataType: {<br>    channel-&gt;<span class="hljs-built_in">Write</span>(value.v_type);<br>    <span class="hljs-comment">// padding</span><br>    <span class="hljs-type">int32_t</span> padding = <span class="hljs-number">0</span>;<br>    channel-&gt;<span class="hljs-keyword">template</span> <span class="hljs-built_in">Write</span>&lt;<span class="hljs-type">int32_t</span>&gt;(padding); <span class="hljs-comment">// MARK</span><br>    <span class="hljs-keyword">break</span>;<br>}<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">case</span> kTVMDataType: {<br>    channel-&gt;<span class="hljs-built_in">Read</span>(&amp;(value.v_type));<br>    <span class="hljs-type">int32_t</span> padding = <span class="hljs-number">0</span>;<br>    channel-&gt;<span class="hljs-keyword">template</span> <span class="hljs-built_in">Read</span>&lt;<span class="hljs-type">int32_t</span>&gt;(&amp;padding); <span class="hljs-comment">// MARK</span><br>    <span class="hljs-keyword">break</span>;<br>}<br></code></pre></td></tr></table></figure>
+
+<p>这里tvm传输<code>TVMValue</code>需要凑齐8字节，而它“知道”<code>DLDataType</code>的大小为4字节（又是一处擅自假设<code>DLDataType</code>的结构与大小的代码），所以再额外读/写了4字节的padding。这里我们直接吧padding部分删掉就行了（因为之前把<code>DLDataType</code>改成了一个8字节的packed-struct）。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>修改<code>DLDataType</code>的<code>lanes</code>的类型至少需要修改以下几处：</p>
+<ul>
+<li><code>3rdparty/dlpack/include/dlpack/dlpack.h:106</code></li>
+<li><code>include/tvm/runtime/data_type.h:75</code></li>
+<li><code>include/tvm/runtime/serializer.h:41,46</code></li>
+<li><code>python/tvm/_ffi/_cython/base.pxi:47</code></li>
+<li><code>python/tvm/_ffi/runtime_ctypes.py:64</code></li>
+<li><code>src/tir/transforms/arg_binder.cc:170</code><ul>
+<li>以下几处也可以酌情修改：<ul>
+<li><code>src/runtime/stackvm/stackvm.cc:532</code></li>
+<li><code>src/tir/transforms/lower_tvm_builtin.cc:194</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>src/target/llvm/codegen_cpu.c:47</code></li>
+<li><code>src/runtime/rpc/rpc_protocol:225,344</code></li>
+</ul>
+<p>修改其他的底层类型所涉及到的地方也与之类似。</p>
+<p>不得不说这应该算TVM设计不合理的地方（或者说设计时根本就没考虑到修改底层类型这种事）。个人认为，除了<code>DLDataType</code>定义的地方（以及python和cython部分的代码），其他地方应该直接引用<code>DLDataType</code>进行编码（比如利用<code>decltype</code>来获取field的类型，据此进行派发）。</p>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/2020/06/28/%E7%94%A8%E9%AD%94%E6%B3%95%E6%89%93%E8%B4%A5%E9%AD%94%E6%B3%95%EF%BC%9AC++%E6%A8%A1%E6%9D%BF%E5%85%83%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E7%9A%84scheme%E5%85%83%E5%BE%AA%E7%8E%AF%E6%B1%82%E5%80%BC%E5%99%A8/">← Next 用魔法打败魔法：C++模板元编程实现的scheme元循环求值器</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/2020/02/20/%E5%9C%A8TVM%E4%B8%AD%E6%B7%BB%E5%8A%A0%E6%96%B0%E8%AE%BE%E5%A4%87Codegen/">在TVM中添加新设备Codegen Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a target="_blank" rel="noopener" href="https://prts.wiki/w/%E6%96%87%E4%BB%B6:%E6%A8%A1%E7%BB%84_%E5%8C%BB%E4%B8%8D%E8%87%AA%E6%B2%BB.png" id="logo"><img src="/imgs/avatar.png" alt="Logo"></a><h1 id="Dr"><a href="/">Renze Chen</a></h1><div id="description"><p>陈仁泽</p></div><div id="social-links"><a class="social" target="_blank" rel="noopener" href="https://github.com/Light-of-Hers"><i class="fab fa-github" alt="GitHub"></i></a><a class="social" target="_blank" rel="noopener" href="https://www.zhihu.com/people/yi-guang-99-48"><i class="fab fa-zhihu" alt="Zhihu"></i></a><a class="social" target="_blank" rel="noopener" href="https://orcid.org/0000-0001-5938-7965"><i class="fab fa-orcid" alt="ORCID"></i></a><a class="social" target="_blank" rel="noopener" href="https://dblp.org/pid/260/5910"><i class="iconfont icon-dblp" alt="DBLP"></i></a><a class="social" href="mailto:crz@pku.edu.cn"><i class="fa fa-envelope" alt="E-Mail"></i></a></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E6%AD%BB%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">作死过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="toc-number">2.1.</span> <span class="toc-text">简单的修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cython%E7%9B%B8%E5%85%B3"><span class="toc-number">2.2.</span> <span class="toc-text">Cython相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LLVM%E7%94%9F%E6%88%90%E7%9A%84Host%E7%AB%AF%E4%BB%A3%E7%A0%81"><span class="toc-number">2.3.</span> <span class="toc-text">LLVM生成的Host端代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="toc-number">2.4.</span> <span class="toc-text">RPC数据传输</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main></body></html>

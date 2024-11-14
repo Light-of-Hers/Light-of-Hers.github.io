@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="en" theme-mode="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>为什么没有自动生成任意算子fusion kernel的工作？（回答） | Renze Chen (陈仁泽)</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: local('Fira Code'), url('/font/FiraCode-Regular.ttf');
+}
+@font-face {
+  font-family: 'Monaco';
+  src: local('Monaco'), url('/font/Monaco.ttf');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/imgs/bk-dark-0.png');
+ --light-background: url('/imgs/bk-light-5.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">About</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Blogs</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>为什么没有自动生成任意算子fusion kernel的工作？（回答）</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2024-09-10T16:18:00.000Z" id="date"> 2024-09-11</time></div></span><br><span>Blog Link: <div class="control"> <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/666742071/answer/3621843363">[site]</a></div></span></div></div><hr><div id="post-content"><p>其实挺多相关工作的。fusion 这个东西扯起来历史还是挺久远的，本身也算编译器领域的一个经典课题，从上世纪开始就有不少 loop fusion 相关的研究，特别是在 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=polyhedral+model&zhida_source=entity">polyhedral model</a> 基础之上进行的 loop fusion，离现在比较近的工作有 PPoPP’14 的 <a href="https://link.zhihu.com/?target=https://web.archive.org/web/20170809133459id_/http://www-users.cs.umn.edu/~sanyam/publications/p233-mehta.pdf">Revisiting loop fusion in the polyhedral framework</a> ，<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=%E8%B5%B5%E6%8D%B7&zhida_source=entity">赵捷</a>大佬的一个<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/65708935/answer/475572657">有关 polyhedral 的知乎回答</a>也有 loop fusion 相关的内容。loop fusion 的收益来源主要就是减少中间数据的搬移，<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=kernel+fusion&zhida_source=entity">kernel fusion</a> 在此基础上还减少了一些 kernel launch 的开销（不过实际场景中减少 kernel launch 带来的收益很多时候可以忽略）。</p>
+<p>fusion 在学术界的发展基本上可以分为 4 个阶段（阶段之间一般有所重叠，没有明确的界限）。第一阶段，loop fusion 作为编译器后端 loop 优化相关的研究的一部分得到初步发展。第二阶段，image processing pipeline 中各种连续的 stencil 操作带来了新的 fusion 空间，因为 stencil 操作引入了滑窗依赖，因此如何进行任务划分来平衡 访存、通信/同步、重复计算 等要素是挺值得研究的，<a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/2694344.2694364">PolyMage</a> 和 <a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/2491956.2462176">Halide</a> 算是这个阶段的一部分代表性工作，甚至还有<a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/2581122.2544160">做六边形 tiling 的工作</a> 。</p>
+<p class='item-img' data-src='https://picx.zhimg.com/80/v2-8d9a049532759315cca24d3bd6821981_1440w.webp?source=2c26e567'><img src="https://picx.zhimg.com/80/v2-8d9a049532759315cca24d3bd6821981_1440w.webp?source=2c26e567"></p>
+<p>第三阶段，就是深度学习加速器和编译器兴起的阶段，那时候有不少加速器设计相关的工作关注 CNN 相邻层的 fusion（和前文说的 stencil pipeline 一样因为有滑窗依赖所以有不少可以研究的点），比如 MICRO’16 的 <a href="https://link.zhihu.com/?target=https://compas.cs.stonybrook.edu/~mferdman/downloads.php/MICRO16_Fused_Layer_CNN_Accelerators.pdf">Fused-Layer</a> ，还有我们组师兄的 <a href="https://link.zhihu.com/?target=http://ceca.pku.edu.cn/media/lw/9b2b54e7fbe742e085ca6c1ae1502791.pdf">DAC’17 的一篇工作</a> ，近几年也有 HPCA’23 的 <a href="https://link.zhihu.com/?target=https://ieeexplore.ieee.org/abstract/document/10071098">DeFiNES</a> 和 <a href="https://link.zhihu.com/?target=https://ieeexplore.ieee.org/document/10071080">ISOSceles</a> 这样的工作。在深度学习编译器这边，做的主要是整个计算图范围内的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=%E8%AE%BF%E5%AD%98%E5%AF%86%E9%9B%86%E5%9E%8B%E7%AE%97%E5%AD%90&zhida_source=entity">访存密集型算子</a>之间的自动融合，典型的工作如 <a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/3453483.3454083">DNNFusion</a>、<a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/3503222.3507723">AStitch</a> 、<a href="https://link.zhihu.com/?target=https://proceedings.mlsys.org/paper_files/paper/2022/hash/e175e8a86d28d935be4f43719651f86d-Abstract.html">Apollo</a> 。</p>
+<p>第四阶段，主要就是 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=transformer&zhida_source=entity">transformer</a> 架构逐渐流行的时候，<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=multi-head+attention&zhida_source=entity">multi-head attention</a> 计算在形状上的特殊性，导致其中的两个矩阵乘在实质上成为了访存密集型算子，有着超大的融合优化收益。MLSys’22 的 <a href="https://link.zhihu.com/?target=https://jxing.me/pdf/bolt-mlsys21.pdf">BOLT</a>、<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=%E6%80%9D%E6%B3%BD&zhida_source=entity">思泽</a>师兄的 HPCA’23 的 <a href="https://link.zhihu.com/?target=https://ieeexplore.ieee.org/document/10071018">Chimera</a> 都对相邻矩阵乘的融合优化做了探索，不过要说这方面最出名的工作还当属 22 年的 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=Flash-Attention&zhida_source=entity">Flash-Attention</a> 和 23 年的 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=Flash-Attention-2&zhida_source=entity">Flash-Attention-2</a>（其实 BOLT 和 Chimera 之类的工作在切分调度上和 FA-2 是一样的，只是没发掘 online-softmax 的用法，因此不能直接用在生产环境中的 attention 上）。然后题主所说的整图范围内的任意算子的 kernel fusion，个人感觉比较接近的是 OSDI’23 的 <a href="https://link.zhihu.com/?target=https://www.usenix.org/conference/osdi23/presentation/shi">Welder</a>（今年 OSDI 的 <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/0f1d14ca1d5408af1cc6b244329138ce">@LeiWang1999</a> 的 <a href="https://link.zhihu.com/?target=https://www.usenix.org/conference/osdi24/presentation/wang-lei">Ladder</a> 也可以算）还有今年 ASPLOS 的几篇工作：<a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/3617232.3624858">Souffle</a>、<a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/3620666.3651383">Korch</a>、<a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1145/3620665.3640366">PyTorch-2</a>。特别是 PyTorch-2，应该算是目前图层面融合优化做得最好的工业级 ML Compiler，虽然它好像不会做<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=%E8%BF%9E%E7%BB%AD%E7%9F%A9%E9%98%B5&zhida_source=entity">连续矩阵</a>的融合。不过连续矩阵乘的融合收益还是要看具体场景，虽然能减少中间矩阵的搬移，但也会影响并行度以及对旁侧矩阵的复用，最好是中间矩阵足够大、旁侧矩阵足够小才有比较好的收益，主流场景中好像基本只有各类 attention、<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=cnn&zhida_source=entity">cnn</a> 的前几层、一些小型 mlp 比较符合这个要求，针对此类少数情况一般手写个算子就差不多得了，特别是现在用 triton 写还很方便……</p>
+<p>还有一类 kernel fusion 被称为 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=horizontal+fusion&zhida_source=entity">horizontal fusion</a>，将不存在依赖任务同时运行在一个 kernel 内增加资源利用率，典型的工作如 CGO’20 的 <a href="https://link.zhihu.com/?target=https://dl.acm.org/doi/10.1109/CGO53902.2022.9741270">HFuse</a> ，OSDI’20 的 <a href="https://link.zhihu.com/?target=https://www.usenix.org/conference/osdi20/presentation/ma">Rammer</a> ，MLSys’21 的 <a href="https://link.zhihu.com/?target=https://proceedings.mlsys.org/paper_files/paper/2021/hash/1f8053a67ec8e0b57455713cefdd8218-Abstract.html">IOS</a> ，最近的 UW 的 Baris Kasikci 组开源的 <a href="https://link.zhihu.com/?target=https://github.com/efeslab/Nanoflow">NanoFlow</a> 也用到了类似的技术，其创新点在于将大模型的推理沿 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=688586491&content_type=Answer&match_order=1&q=batch&zhida_source=entity">batch</a> 切开，将不同 request 的推理错开，人为制造适合进行 horizontal fusion 的异构 task。</p>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/2024/10/17/Mirage%20A%20Multi-Level%20Superoptimizer%20for%20Tensor%20Programs%20%E7%AE%80%E8%AE%B0/">← Next Mirage A Multi-Level Superoptimizer for Tensor Programs 简记</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/2024/08/24/Stream-K%20%E5%92%8C%20Lean-Attention/">Stream-K 和 Lean-Attention Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a target="_blank" rel="noopener" href="https://prts.wiki/w/%E6%96%87%E4%BB%B6:%E6%A8%A1%E7%BB%84_%E5%8C%BB%E4%B8%8D%E8%87%AA%E6%B2%BB.png" id="logo"><img src="/imgs/avatar.png" alt="Logo"></a><h1 id="Dr"><a href="/">Renze Chen</a></h1><div id="description"><p>陈仁泽</p></div><div id="social-links"><a class="social" target="_blank" rel="noopener" href="https://github.com/Light-of-Hers"><i class="fab fa-github" alt="GitHub"></i></a><a class="social" target="_blank" rel="noopener" href="https://www.zhihu.com/people/yi-guang-99-48"><i class="fab fa-zhihu" alt="Zhihu"></i></a><a class="social" target="_blank" rel="noopener" href="https://orcid.org/0000-0001-5938-7965"><i class="fab fa-orcid" alt="ORCID"></i></a><a class="social" target="_blank" rel="noopener" href="https://dblp.org/pid/260/5910"><i class="iconfont icon-dblp" alt="DBLP"></i></a><a class="social" href="mailto:crz@pku.edu.cn"><i class="fa fa-envelope" alt="E-Mail"></i></a></div></div><div id="aside-block"></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main></body></html>
